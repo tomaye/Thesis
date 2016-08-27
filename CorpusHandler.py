@@ -11,8 +11,10 @@ cutOffLabels = False
 changeLabels = False
 
 def main():
-    #splitter()
-    tokenizer()
+
+    #cleaner()
+    splitter()
+    #tokenizer()
 
 def cleaner():
 
@@ -52,8 +54,10 @@ def cleaner():
 
             if cutOffLabels:
                 line = line[1] + "\t" + line[2] + "\n"
+                #fileOut = fileOut3
             else:
                 line = line[0]+"\t"+line[1]+"\t"+line[2]+"\n"
+
 
 
         fileOut.write(line)

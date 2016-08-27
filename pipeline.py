@@ -14,6 +14,10 @@ from sklearn.grid_search import GridSearchCV
 from sklearn.feature_extraction import DictVectorizer #converts dics to feature matrices
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.datasets import load_files
+from pprint import pprint
+from sklearn.metrics import accuracy_score
+import numpy as np
 
 print('The nltk version is {}.'.format(nltk.__version__))
 print('The scikit-learn version is {}.'.format(sklearn.__version__))
@@ -161,5 +165,95 @@ def main():
     #ngram_feature(data)
     word2vec_feature()
 
-main()
+
+class numberOfTokens(object):
+
+    def fit(self,data):
+        X = []
+        for elem in data.data:
+            X.append(elem)
+        return np.array(X)
+
+    def fit_transform(self, data):
+        X = []
+        for elem in data.data:
+            X.append(elem)
+        return np.array(X)
+
+    def transform(self,data):
+        X = []
+        for elem in data.data:
+            X.append(elem)
+        return np.array(X)
+
+
+
+def test():
+    data = load_files(os.getcwd() + "/data/corpus/MetalogueCorpus/", description=None, categories=None,
+                      load_content=True, shuffle=True,
+                      encoding=None, decode_error='strict', random_state=0)
+
+
+    print("%d documents" % len(data.filenames))
+    print("%d categories" % len(data.target_names))
+    ex = str(data.data[1])
+    print(ex)
+    i = 0
+    for elem in data.data:
+        data.data[i] = str(elem)
+        i += 1
+
+    #numberOfTokens(data)
+    #exit()
+
+    training_set, test_set = data.data[:350], data.data[-100:]
+
+    #print(data.target)
+
+    vectNgrams = CountVectorizer(ngram_range=(2,3))
+
+    X_train = vectNgrams.fit_transform(training_set)
+    X_test = vectNgrams.transform(test_set)
+
+    pipeline = Pipeline([
+        ('vect', CountVectorizer()),
+        ('tfidf', TfidfTransformer()),
+        ('clf' , svm.SVC()),
+        #('tokens', numberOfTokens()),
+    ])
+
+    parameters = {
+        'vect__max_df': (0.5, 0.75, 1.0),
+        # 'vect__max_features': (None, 5000, 10000, 50000),
+        'vect__ngram_range': ((2, 2),(2,3)),  # unigrams or bigrams
+        # 'tfidf__use_idf': (True, False),
+        # 'tfidf__norm': ('l1', 'l2'),
+        #'clf__alpha': (0.00001, 0.000001),
+        #'clf__penalty': ('l2', 'elasticnet'),
+        # 'clf__n_iter': (10, 50, 80),
+    }
+
+    grid_search = GridSearchCV(pipeline, parameters, n_jobs=-1, verbose=1)
+    print("Performing classification search...")
+    print("pipeline:", [name for name, _ in pipeline.steps])
+    print("parameters:")
+    pprint(parameters)
+    t0 = time()
+    #clf = svm.SVC()
+    #clf.fit(training_set, data.target[350:])
+    #y_pred = clf.predict(test_set)
+    #y_true = data.target[:100]
+    #print(accuracy_score(y_true,y_pred))
+    grid_search.fit(data.data, data.target)
+    print("done in %0.3fs" % (time() - t0))
+    print()
+    print("Best score: %0.3f" % grid_search.best_score_)
+    print("Best parameters set:")
+    best_parameters = grid_search.best_estimator_.get_params()
+    for param_name in sorted(parameters.keys()):
+        print("\t%s: %r" % (param_name, best_parameters[param_name]))
+
+
+#main()
+test()
 print("Done")

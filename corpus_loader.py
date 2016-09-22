@@ -14,10 +14,12 @@ class CorpusLoader:
         if file != None:
             self.load(file, False)
 
-    def add_Corpus(self):
+    def add_Corpus(self,path):
         #combines another corpus with the current
-        None
-        #TODO
+        temp = self.target_names
+        self.load(path)
+        newTargets = set(temp + self.target_names)
+        self.target_names = list(newTargets)
 
     def load(self, path, lemmatize=False):
         #loads corpus into self.data
@@ -114,13 +116,17 @@ class CorpusLoader:
         #print(self.data["negative"][1])
         #print(type(self.data["negative"][1]))
 
-    def toLists(self, corpus):
+    def toLists(self, corpus, labels):
+        #samples: list of strings
+        #y: target
+        #mapping: mapping labels to int
+
         samples = []
         y = []
-        i = 1
-        mapping = {}
-        for label in list(corpus.keys()):
-            mapping[i] = label
+        i = 0
+        mapping = []
+        for label in labels:
+            mapping.append(label)
             for elem in corpus[label]:
                 samples.append(elem)
                 y.append(i)

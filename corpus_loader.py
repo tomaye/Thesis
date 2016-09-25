@@ -21,14 +21,26 @@ class CorpusLoader:
         newTargets = set(temp + self.target_names)
         self.target_names = list(newTargets)
 
-    def load(self, path, lemmatize=False):
+    def load(self, path, min = None, max = None ,lemmatize=False):
         #loads corpus into self.data
+        #min = minLength of phrase
+        #max = MaxLength of phrase
+
         file = open(os.getcwd()+"/"+ path)
         if lemmatize:
             lemmatizer = WordNetLemmatizer()
         for line in file:
             line = line.split("\t")
             text = line[-2:]
+            textLength = (text[0] + text[1]).split()
+
+            if min != None and len(textLength) < min:
+                continue
+
+            if max != None and len(textLength) > max:
+                continue
+
+
             if lemmatize:
                 text = []
                 for sentence in line[-2:]:
@@ -37,6 +49,7 @@ class CorpusLoader:
                         temp.append(lemmatizer.lemmatize(word.lower(), "v"))
                     temp = " ".join(temp)
                     text.append(temp)
+
             self.data[line[0]].append(text)
         self.target_names = list(self.data.keys())
 

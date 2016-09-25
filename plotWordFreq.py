@@ -94,12 +94,15 @@ def plotHisto(data,binRange , color = "r", label ="noLabel"):
 def loadData():
     file = "data/corpus/Metalogue_extractedLinks_fullCorpus.txt"
     file2 = "data/corpus/Metalogue_Corpus_NegativePhrases.txt"
+    file3 = "data/corpus/IBM_extracted_raw.txt"
 
-    CL = CorpusLoader(file)
+    CL = CorpusLoader()
+    CL.load(file3)
 
-    CL.add_Corpus(file2)
-    CL.mergeLabel("justification", "evidence", "contingency")
+    #CL.add_Corpus(file2)
+    #CL.mergeLabel("justification", "evidence", "contingency")
     CL.stats(CL.data)
+    print("DONE")
 
     return CL.data
 
@@ -111,19 +114,22 @@ def main():
     f3 = "data/corpus/Metalogue_extractedLinks_contrast.txt"
     f4 = "data/corpus/Metalogue_extractedLinks_fullCorpus.txt_justification.txt"
     f5 = "data/corpus/Metalogue_extractedLinks_fullCorpus.txt_evidence.txt"
+    f6 = "data/corpus/IBM_extracted_raw.txt"
 
 
     corpus = loadData()
 
 
     classes = [corpus["negative"],corpus["noLabel"],corpus["contingency"]]
+    classes = [corpus["STUDY"], corpus["EXPERT"], corpus["STUDY, EXPERT"]]
     #classes = [corpus["negative"]]
     labels = ["Contrast","Elaboration","PhrasePairs"]
     labels = ["contingency","PhrasePairs","negative"]
+    labels = ["Study/Expert","Expert","Study"]
     #labels = ["negative"]
     colors = list("rgb")
     min = 10
-    max = 60
+    max = 120
     bins = 2
 
     histoData = []

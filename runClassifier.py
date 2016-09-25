@@ -8,6 +8,7 @@ import scipy.sparse as sp
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 ################
@@ -16,14 +17,16 @@ from sklearn.feature_extraction.text import TfidfTransformer
 
 file = "data/corpus/Metalogue_extractedLinks_fullCorpus.txt"
 file2 = "data/corpus/Metalogue_Corpus_NegativePhrases.txt"
+file3 = "data/corpus/IBM_extracted_raw.txt"
 
-CL = CorpusLoader(file)
+CL = CorpusLoader(file3)
 CL.add_Corpus(file2)
 CL.stats(CL.data)
 print(CL.target_names)
 
-CL.mergeLabel("justification","evidence","contingency")
-#CL.mergeLabel("evidence","negative","negative")
+CL.mergeLabel("STUDY","STUDY, EXPERT","contingency")
+#CL.mergeLabel("justification","evidence","contingency")
+CL.mergeLabel("EXPERT","noLabel","negative")
 CL.mergeData()
 
 corpus = CL.balance(["contingency","negative"])
@@ -58,14 +61,18 @@ def addFeature (name):
 
     if name == "Tf-idf":
 
-        vectorizer = CountVectorizer()
-        vectNgram = CountVectorizer(ngram_range=(ngram_size, ngram_size))
-        tf_transformer = TfidfTransformer(use_idf=False)
+        #vectorizer = CountVectorizer(min_df=1)
+        #vectNgram = CountVectorizer(ngram_range=(ngram_size, ngram_size))
+        #tf_transformer = TfidfTransformer(use_idf=False)
+        tf_vect = TfidfVectorizer(min_df=0.4)
 
-        ngramCount = vectNgram.fit_transform(samples)
-        wordCounts = vectorizer.fit_transform(samples)
+        #ngramCount = vectNgram.fit_transform(samples)
+        #wordCounts = vectorizer.fit_transform(samples)
 
-        tfidfMatrix = tf_transformer.fit_transform(wordCounts)
+        #tfidfMatrix = tf_transformer.fit_transform(wordCounts)
+
+        tfidfMatrix = tf_vect.fit_transform(samples)
+        print("SIZE: " + str(tfidfMatrix.size))
 
         return tfidfMatrix
 

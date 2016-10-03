@@ -16,4 +16,8 @@ def countTokens(sentList):
     vec = DictVectorizer()
     matrix = vec.fit_transform(X)
 
+    print("TOKEN")
+    print(type(matrix))
+    print(matrix.size)
+
     return matrix

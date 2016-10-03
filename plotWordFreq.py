@@ -129,7 +129,7 @@ def main():
     #labels = ["negative"]
     colors = list("rgb")
     min = 10
-    max = 120
+    max = 70
     bins = 2
 
     histoData = []

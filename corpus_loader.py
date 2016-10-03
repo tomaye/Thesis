@@ -8,11 +8,11 @@ import numpy as np
 class CorpusLoader:
     """loads and distributes training and test data"""
 
-    def __init__(self, file=None):
+    def __init__(self, file=None, min = None, max = None):
         self.data = defaultdict(list)
         self.target_names = []
         if file != None:
-            self.load(file, False)
+            self.load(file,min, max, False)
 
     def add_Corpus(self,path):
         #combines another corpus with the current

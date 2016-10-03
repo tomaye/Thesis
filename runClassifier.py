@@ -2,7 +2,7 @@ import numpy as np
 from corpus_loader import CorpusLoader
 from sklearn import cross_validation
 from sklearn import svm
-from features import modality, token_counter
+from features import modality, token_counter, skipgrams
 
 import scipy.sparse as sp
 
@@ -19,13 +19,13 @@ file = "data/corpus/Metalogue_extractedLinks_fullCorpus.txt"
 file2 = "data/corpus/Metalogue_Corpus_NegativePhrases.txt"
 file3 = "data/corpus/IBM_extracted_raw.txt"
 
-CL = CorpusLoader(file3)
+CL = CorpusLoader(file, 15, 100)
 CL.add_Corpus(file2)
 CL.stats(CL.data)
 print(CL.target_names)
 
-CL.mergeLabel("STUDY","STUDY, EXPERT","contingency")
-#CL.mergeLabel("justification","evidence","contingency")
+#CL.mergeLabel("STUDY","STUDY, EXPERT","contingency")
+CL.mergeLabel("justification","evidence","contingency")
 CL.mergeLabel("EXPERT","noLabel","negative")
 CL.mergeData()
 
@@ -51,9 +51,10 @@ clf = svm.SVC(kernel='linear', C=1)
 ngram_size = 2
 
 features = {
-    "Tf-idf" : True,
+    "Tf-idf" : False,
     "NumberOfTokens" : True,
-    "Modality" : True
+    "Modality" : True,
+    "skipgrams" : True
 }
 
 
@@ -72,7 +73,8 @@ def addFeature (name):
         #tfidfMatrix = tf_transformer.fit_transform(wordCounts)
 
         tfidfMatrix = tf_vect.fit_transform(samples)
-        print("SIZE: " + str(tfidfMatrix.size))
+        print("TFIDF_SIZE: " + str(tfidfMatrix.size))
+        print(type(tfidfMatrix))
 
         return tfidfMatrix
 
@@ -89,6 +91,12 @@ def addFeature (name):
         mod = modality.checkModality(samples)
 
         return mod
+
+    if name == "skipgrams":
+
+        skip = skipgrams.skipgramMatrix(samples, 2, 2, y, 100)
+
+        return skip
 
 
 

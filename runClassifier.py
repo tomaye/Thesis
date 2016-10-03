@@ -2,7 +2,7 @@ import numpy as np
 from corpus_loader import CorpusLoader
 from sklearn import cross_validation
 from sklearn import svm
-from features import modality, token_counter, skipgrams
+from features import modality, token_counter, skipgrams, wordpairs
 
 import scipy.sparse as sp
 
@@ -52,9 +52,10 @@ ngram_size = 2
 
 features = {
     "Tf-idf" : False,
-    "NumberOfTokens" : True,
-    "Modality" : True,
-    "skipgrams" : True
+    "NumberOfTokens" : False,
+    "Modality" : False,
+    "skipgrams" : True,
+    "wordpairs" : True
 }
 
 
@@ -97,6 +98,12 @@ def addFeature (name):
         skip = skipgrams.skipgramMatrix(samples, 2, 2, y, 100)
 
         return skip
+
+    if name == "wordpairs":
+
+        wp = wordpairs.get_word_pairs(samples, y)
+
+        return wp
 
 
 

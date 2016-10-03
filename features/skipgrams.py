@@ -92,6 +92,7 @@ def skipgramMatrix(text, n, k, y, max = 10):
 
     matrix = vec.transform(X)
 
+    #print(matrix.shape)
 
     return matrix
 
@@ -102,4 +103,4 @@ def main():
 
     skipgramMatrix(text,2,2,[0, 1])
 
-#main()
+main()

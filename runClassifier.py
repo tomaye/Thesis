@@ -51,9 +51,9 @@ clf = svm.SVC(kernel='linear', C=1)
 ngram_size = 2
 
 features = {
-    "Tf-idf" : False,
-    "NumberOfTokens" : False,
-    "Modality" : False,
+    "Tf-idf" : True,
+    "NumberOfTokens" : True,
+    "Modality" : True,
     "skipgrams" : True,
     "wordpairs" : True
 }

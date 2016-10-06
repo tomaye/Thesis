@@ -15,25 +15,26 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 ##LOADING DATA##
 ################
 
-file = "data/corpus/Metalogue_extractedLinks_fullCorpus.txt"
-file2 = "data/corpus/Metalogue_Corpus_NegativePhrases.txt"
-file3 = "data/corpus/IBM_extracted_raw.txt"
+corpora = {}
 
-CL = CorpusLoader(file, 15, 100)
-CL.add_Corpus(file2)
-CL.stats(CL.data)
-print(CL.target_names)
+#sentenceLength:
+min = 15
+max = 100
 
-#CL.mergeLabel("STUDY","STUDY, EXPERT","contingency")
-CL.mergeLabel("justification","evidence","contingency")
-CL.mergeLabel("EXPERT","noLabel","negative")
-CL.mergeData()
+X_train = []
+y_train = []
 
-corpus = CL.balance(["contingency","negative"])
+def load_corpus(name, files, merge = True):
 
-CL.stats(corpus)
+    CL = CorpusLoader(files[0], min, max)
+    CL.add_Corpus(files[1],min, max)
 
-samples, y, mapping = CL.toLists(corpus,["contingency","negative"])
+    if merge:
+        CL.mergeData()
+
+    corpora[name] = CL
+
+    print(name+ " loaded...")
 
 
 ##############
@@ -51,11 +52,11 @@ clf = svm.SVC(kernel='linear', C=1)
 ngram_size = 2
 
 features = {
-    "Tf-idf" : True,
-    "NumberOfTokens" : True,
-    "Modality" : True,
+    "Tf-idf" : False,
+    "NumberOfTokens" : False,
+    "Modality" : False,
     "skipgrams" : True,
-    "wordpairs" : True
+    "wordpairs" : False
 }
 
 
@@ -74,8 +75,8 @@ def addFeature (name):
         #tfidfMatrix = tf_transformer.fit_transform(wordCounts)
 
         tfidfMatrix = tf_vect.fit_transform(samples)
-        print("TFIDF_SIZE: " + str(tfidfMatrix.size))
-        print(type(tfidfMatrix))
+        #print("TFIDF_SIZE: " + str(tfidfMatrix.size))
+        #print(type(tfidfMatrix))
 
         return tfidfMatrix
 
@@ -95,9 +96,16 @@ def addFeature (name):
 
     if name == "skipgrams":
 
-        skip = skipgrams.skipgramMatrix(samples, 2, 2, y, 100)
+        skips = skipgrams.getSkipgrams(X_train, 2, 2)
+        vec = skipgrams.get_best_features(skips, y_train, 100)
+        train_X = vec.transform(skips)
 
-        return skip
+        if withTestset:
+            test_X = vec.transform(test)
+        else:
+            test_X = -1
+
+        return train_X, test_X
 
     if name == "wordpairs":
 
@@ -122,22 +130,57 @@ def mergeMatrices(matrix1, matrix2):
 ##PIPELINE##
 ############
 
-featureMatrix = None
+#text files:
+metalogue = ["data/corpus/Metalogue_extractedLinks_fullCorpus.txt","data/corpus/Metalogue_Corpus_NegativePhrases.txt"]
+IBM = ["data/corpus/IBM_extracted_raw.txt", "data/corpus/IBM_extracted_raw_negatives.txt"]
+
+
+#CL.mergeLabel("STUDY","STUDY, EXPERT","contingency")
+#CL.mergeLabel("justification","evidence","contingency")
+#CL.mergeLabel("EXPERT","noLabel","negative")
+
+
+load_corpus("metalogue",metalogue)
+load_corpus("IBM",IBM)
+
+for elem in corpora:
+    print("Stats of "+ elem + ":")
+    corpora[elem].stats()
+    print("\n")
+
+
+IBM = corpora["IBM"]
+IBM.mergeLabel("STUDY","STUDY, EXPERT","contingency")
+corpus = IBM.balance(["contingency","noLabel"])
+X_train, y_train, mapping = IBM.toLists(corpus,["contingency","noLabel"])
+withTestset = False
+
+featureMatrix_train = None
+featureMatrix_test = None
 featureList = []
 
 for feature in features.keys():
 
     if features[feature]:
-        matrix = addFeature(feature)
+        train,test = addFeature(feature)
         featureList.append(feature)
 
-        if featureMatrix == None:
-            featureMatrix = matrix
+
+        if featureMatrix_train == None:
+            featureMatrix_train = train
         else:
-            featureMatrix = mergeMatrices(featureMatrix, matrix)
+            featureMatrix_train = mergeMatrices(featureMatrix_train, train)
+
+        if withTestset:
+            if featureMatrix_test == None:
+                featureMatrix_test = test
+            else:
+                featureMatrix_test = mergeMatrices(featureMatrix_test, test)
 
 
-scores = cross_validation.cross_val_score(clf, featureMatrix, y, cv=5)
+scores = cross_validation.cross_val_score(clf, featureMatrix_train, y_train, cv=5)
+#TODO
+#scores = cross_validation.cross_val_score(clf, featureMatrix_train, y_test, cv=5)
 
 print("\n")
 print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))

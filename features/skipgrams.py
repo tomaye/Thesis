@@ -54,16 +54,13 @@ def skipgrams(sequence, n, k, pad_left=False, pad_right=False, pad_symbol=None):
     for ng in list(skipgrams(history, n, k-1)):
         yield ng
 
-def skipgramMatrix(text, n, k, y, max = 10):
+def getSkipgrams(text, n, k):
     """
     :param text: formatted text data
     :type text : list of strings
     :param n: n in k-skip-n-grams
     :param k: k in k-skip-n-grams
-    :param y: target values
-    :type y: list
-    :param max: return the max most frequent
-    :return: scipy.sparse.csr.csr_matrix
+    :return: list of dicts of skipgrams [instance1{skip1:1,skip2:1},instance2{...}]
     """
 
     X = []
@@ -78,29 +75,40 @@ def skipgramMatrix(text, n, k, y, max = 10):
             dict[skipgram] += 1
         X.append(dict)
 
+    return X
+
+def get_best_features(X,y, max = 10):
+    '''
+    :param X: list of skipgrams
+    :type X: list of dicts
+    :param y: target values
+    :type y: list
+    :param max: return the max most frequent
+    :return: DictVectorizer with k best as features
+    '''
+
     vec = DictVectorizer()
 
     matrix = vec.fit_transform(X)
-    print("SKIPGRAMS")
-    print(len(vec.get_feature_names()))
 
+    #select k best
     support = SelectKBest(chi2, k=max).fit(matrix, y)
     vec.restrict(support.get_support())
 
-    print(len(vec.get_feature_names()))
-    #print(vec.get_feature_names())
+    #transform to k best features
+    #matrix = vec.transform(X)
 
-    matrix = vec.transform(X)
 
-    #print(matrix.shape)
-
-    return matrix
+    return vec
 
 
 def main():
     text = ["killed by my husband", "in the by house in the my household"]
 
 
-    skipgramMatrix(text,2,2,[0, 1])
+    X = getSkipgrams(text,2,2)
+    print(X)
+    vec = get_best_features(X,[0, 1])
+    matrix = vec.transform(X)
 
-main()
+#main()

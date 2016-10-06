@@ -6,29 +6,30 @@ import math
 import numpy as np
 
 class CorpusLoader:
-    """loads and distributes training and test data"""
+    '''loads and distributes training and test data'''
 
     def __init__(self, file=None, min = None, max = None):
         self.data = defaultdict(list)
         self.target_names = []
         if file != None:
-            self.load(file,min, max, False)
+            self.load(file,min, max)
 
-    def add_Corpus(self,path):
+
+    def add_Corpus(self,path, min, max):
         #combines another corpus with the current
         temp = self.target_names
-        self.load(path)
+        self.load(path, min, max)
         newTargets = set(temp + self.target_names)
         self.target_names = list(newTargets)
 
-    def load(self, path, min = None, max = None ,lemmatize=False):
+
+    def load(self, path, min = None, max = None):
         #loads corpus into self.data
         #min = minLength of phrase
         #max = MaxLength of phrase
 
         file = open(os.getcwd()+"/"+ path)
-        if lemmatize:
-            lemmatizer = WordNetLemmatizer()
+
         for line in file:
             line = line.split("\t")
             text = line[-2:]
@@ -40,31 +41,24 @@ class CorpusLoader:
             if max != None and len(textLength) > max:
                 continue
 
-
-            if lemmatize:
-                text = []
-                for sentence in line[-2:]:
-                    temp = []
-                    for word in sentence.split():
-                        temp.append(lemmatizer.lemmatize(word.lower(), "v"))
-                    temp = " ".join(temp)
-                    text.append(temp)
-
             self.data[line[0]].append(text)
         self.target_names = list(self.data.keys())
 
-    def stats(self, data):
+
+
+    def stats(self):
         #returns the distribution of data
         stats = {}
         stats["total"] = 0
-        for key in data.keys():
-            stats[key] = len(data[key])
-            stats["total"] += len(data[key])
-            print(str(key) + " : " + str(len(data[key])))
+        for key in self.data.keys():
+            stats[key] = len(self.data[key])
+            stats["total"] += len(self.data[key])
+            print(str(key) + " : " + str(len(self.data[key])))
 
         print(str("total") + " : " + str(stats["total"]))
 
         return stats
+
 
     def grab(self, label, n, shuffled=True):
         #grabs n elements with this label
@@ -130,6 +124,11 @@ class CorpusLoader:
         #print(type(self.data["negative"][1]))
 
     def toLists(self, corpus, labels):
+        '''
+        :param corpus:
+        :param labels:
+        :return:
+        '''
         #samples: list of strings
         #y: target
         #mapping: mapping labels to int

@@ -101,6 +101,7 @@ def addFeature (name):
         train_X = vec.transform(skips)
 
         if withTestset:
+            test = skipgrams.getSkipgrams(X_test, 2, 2)
             test_X = vec.transform(test)
         else:
             test_X = -1
@@ -151,9 +152,16 @@ for elem in corpora:
 
 IBM = corpora["IBM"]
 IBM.mergeLabel("STUDY","STUDY, EXPERT","contingency")
-corpus = IBM.balance(["contingency","noLabel"])
-X_train, y_train, mapping = IBM.toLists(corpus,["contingency","noLabel"])
-withTestset = False
+corpusIBM = IBM.balance(["contingency","noLabel"])
+
+META = corpora["metalogue"]
+META.mergeLabel("justification","evidence","contingency")
+corpusMETA = META.balance(["contingency","noLabel"])
+
+X_test, y_test, train_mapping = IBM.toLists(corpusIBM,["contingency","noLabel"])
+X_train, y_train, test_mapping = META.toLists(corpusMETA,["contingency","noLabel"])
+
+withTestset = True
 
 featureMatrix_train = None
 featureMatrix_test = None
@@ -178,9 +186,9 @@ for feature in features.keys():
                 featureMatrix_test = mergeMatrices(featureMatrix_test, test)
 
 
-scores = cross_validation.cross_val_score(clf, featureMatrix_train, y_train, cv=5)
+#scores = cross_validation.cross_val_score(clf, featureMatrix_train, y_train, cv=5)
 #TODO
-#scores = cross_validation.cross_val_score(clf, featureMatrix_train, y_test, cv=5)
+scores = cross_validation.cross_val_score(clf, featureMatrix_test, y_test, cv=5)
 
 print("\n")
 print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))

@@ -3,112 +3,159 @@ from sklearn.feature_extraction import DictVectorizer
 from collections import defaultdict
 from sklearn.feature_selection import SelectKBest, chi2
 
-def pad_sequence(sequence, n, pad_left=False, pad_right=False, pad_symbol=None):
-    if pad_left:
-        sequence = chain((pad_symbol,) * (n-1), sequence)
-    if pad_right:
-        sequence = chain(sequence, (pad_symbol,) * (n-1))
-    return sequence
 
-def skipgrams(sequence, n, k, pad_left=False, pad_right=False, pad_symbol=None):
-    sequence_length = len(sequence)
-    sequence = iter(sequence)
-    sequence = pad_sequence(sequence, n, pad_left, pad_right, pad_symbol)
+class SkipgramVectorizer(DictVectorizer):
 
-    if sequence_length + pad_left + pad_right < k:
-        raise Exception("The length of sentence + padding(s) < skip")
+    def __init__(self):
 
-    if n < k:
-        raise Exception("Degree of Ngrams (n) needs to be bigger than skip (k)")
+        self.vectorizer = DictVectorizer()
+        super(DictVectorizer, self).__init__()
 
-    history = []
-    nk = n+k
+    def pad_sequence(self, sequence, n, pad_left=False, pad_right=False, pad_symbol=None):
+        if pad_left:
+            sequence = chain((pad_symbol,) * (n-1), sequence)
+        if pad_right:
+            sequence = chain(sequence, (pad_symbol,) * (n-1))
+        return sequence
 
-    # Return point for recursion.
-    if nk < 1:
-        return
-    # If n+k longer than sequence, reduce k by 1 and recur
-    elif nk > sequence_length:
-        for ng in skipgrams(list(sequence), n, k-1):
+    def skipgrams(self, sequence, n, k, pad_left=False, pad_right=False, pad_symbol=None):
+        sequence_length = len(sequence)
+        sequence = iter(sequence)
+        sequence = self.pad_sequence(sequence, n, pad_left, pad_right, pad_symbol)
+
+        if sequence_length + pad_left + pad_right < k:
+            raise Exception("The length of sentence + padding(s) < skip")
+
+        if n < k:
+            raise Exception("Degree of Ngrams (n) needs to be bigger than skip (k)")
+
+        history = []
+        nk = n+k
+
+        # Return point for recursion.
+        if nk < 1:
+            return
+        # If n+k longer than sequence, reduce k by 1 and recur
+        elif nk > sequence_length:
+            for ng in self.skipgrams(list(sequence), n, k-1):
+                yield ng
+
+        while nk > 1: # Collects the first instance of n+k length history
+            history.append(next(sequence))
+            nk -= 1
+
+        # Iterative drop first item in history and picks up the next
+        # while yielding skipgrams for each iteration.
+        for item in sequence:
+            history.append(item)
+            current_token = history.pop(0)
+            # Iterates through the rest of the history and
+            # pick out all combinations the n-1grams
+            for idx in list(combinations(range(len(history)), n-1)):
+                ng = [current_token]
+                for _id in idx:
+                    ng.append(history[_id])
+                yield tuple(ng)
+
+        # Recursively yield the skigrams for the rest of sequence where
+        # len(sequence) < n+k
+        for ng in list(self.skipgrams(history, n, k-1)):
             yield ng
 
-    while nk > 1: # Collects the first instance of n+k length history
-        history.append(next(sequence))
-        nk -= 1
+    def getSkipgrams(self, text, n = 2, k = 2):
+        """
+        :param text: formatted text data
+        :type text : list of strings
+        :param n: n in k-skip-n-grams
+        :param k: k in k-skip-n-grams
+        :return: list of dicts of skipgrams [instance1{skip1:1,skip2:1},instance2{...}]
+        """
 
-    # Iterative drop first item in history and picks up the next
-    # while yielding skipgrams for each iteration.
-    for item in sequence:
-        history.append(item)
-        current_token = history.pop(0)
-        # Iterates through the rest of the history and
-        # pick out all combinations the n-1grams
-        for idx in list(combinations(range(len(history)), n-1)):
-            ng = [current_token]
-            for _id in idx:
-                ng.append(history[_id])
-            yield tuple(ng)
+        skips = []
 
-    # Recursively yield the skigrams for the rest of sequence where
-    # len(sequence) < n+k
-    for ng in list(skipgrams(history, n, k-1)):
-        yield ng
+        for sent in text:
 
-def getSkipgrams(text, n, k):
-    """
-    :param text: formatted text data
-    :type text : list of strings
-    :param n: n in k-skip-n-grams
-    :param k: k in k-skip-n-grams
-    :return: list of dicts of skipgrams [instance1{skip1:1,skip2:1},instance2{...}]
-    """
+            dict = defaultdict(int)
 
-    X = []
+            skipgramList = list(self.skipgrams(sent.split(), n, k))
 
-    for sent in text:
+            for skipgram in skipgramList:
+                dict[skipgram] += 1
+            skips.append(dict)
 
-        dict= defaultdict(int)
+        return skips
 
-        skipgramList = list(skipgrams(sent.split(),n, k))
+    def get_best_features(self, X, y, max = 10):
+        '''
+        :param X: list of skipgrams
+        :type X: list of dicts
+        :param y: target values
+        :type y: list
+        :param max: return the max most frequent
+        :return: DictVectorizer with k best as features
+        '''
 
-        for skipgram in skipgramList:
-            dict[skipgram] += 1
-        X.append(dict)
+        vec = DictVectorizer()
+        matrix = vec.fit_transform(X)
 
-    return X
+        #select k best
+        support = SelectKBest(chi2, k=max).fit(matrix, y)
+        vec.restrict(support.get_support())
 
-def get_best_features(X,y, max = 10):
-    '''
-    :param X: list of skipgrams
-    :type X: list of dicts
-    :param y: target values
-    :type y: list
-    :param max: return the max most frequent
-    :return: DictVectorizer with k best as features
-    '''
+        #transform to k best features
+        #matrix = vec.transform(X)
+        #print(matrix.shape)
 
-    vec = DictVectorizer()
+        return vec
 
-    matrix = vec.fit_transform(X)
+    def fit(self, X, y=None):
 
-    #select k best
-    support = SelectKBest(chi2, k=max).fit(matrix, y)
-    vec.restrict(support.get_support())
+        skipgrams = self.getSkipgrams(X)
+        self.vectorizer.fit(skipgrams)
+        self.feature_names_ = self.vectorizer.feature_names_
+        self.vocabulary_ = self.vectorizer.vocabulary_
 
-    #transform to k best features
-    #matrix = vec.transform(X)
+        return self
+
+    def transform(self, X, y=None):
+
+        skipgrams = self.getSkipgrams(X)
+        matrix = self.vectorizer.transform(skipgrams)
+        self.feature_names_ = self.vectorizer.feature_names_
+        self.vocabulary_ = self.vectorizer.vocabulary_
+
+        return matrix
+
+    def fit_transform(self, X, y=None):
+
+        skipgrams = self.getSkipgrams(X)
+        matrix = self.vectorizer.fit_transform(skipgrams)
+        self.feature_names_ = self.vectorizer.feature_names_
+        self.vocabulary_ = self.vectorizer.vocabulary_
+
+        return matrix
+
+    def restrict(self, support, indices=False):
+
+        self.vectorizer.restrict(support, indices)
+
+        return self
 
 
-    return vec
 
+#testing
 
-def main():
-    text = ["killed by my husband", "in the by house in the my household"]
+text = ["killed by my husband", "in the by house in the my household", "the household killed my husband"]
+y = [0, 1, 1]
 
+vec = SkipgramVectorizer()
 
-    X = getSkipgrams(text,2,2)
-    print(X)
-    vec = get_best_features(X,[0, 1])
-    matrix = vec.transform(X)
+matrix = vec.fit_transform(text)
 
-#main()
+support = SelectKBest(chi2, 10).fit(matrix, y)
+vec.restrict(support.get_support())
+
+matrix = vec.transform(text)
+
+print(vec.get_feature_names())
+print(matrix.shape)

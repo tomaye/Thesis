@@ -102,9 +102,15 @@ class CorpusLoader:
         None
         #TODO
 
-    def mergeLabel(self,label1, label2, newLabel):
+    def mergeLabel(self, labels, newLabel):
         #merges two labels into a new one
-        self.data[newLabel] = self.data[label1] + (self.data[label2])
+        merged = []
+        for label in labels:
+            merged += self.data[label]
+        self.data[newLabel] = merged
+
+        #self.data[newLabel] = [self.data[label] for label in labels]
+        #self.data[newLabel] = self.data[label1] + (self.data[label2])
         #self.target_names.remove(label1)
         #self.target_names.remove(label2)
         if newLabel not in self.target_names:

@@ -49,7 +49,12 @@ class Pipeline:
             self.features[feature] = -1
 
     def get_labels(self, corpus):
-        corpus.stats()
+
+        if type(corpus) == str:
+            self.corpora[corpus].stats()
+        else:
+            None
+            #TODO
 
     def preprocessing(self, corpus, labels, balance = True):
         '''
@@ -74,8 +79,8 @@ class Pipeline:
 
         return matrix
 
-    def set_test(self, corpus):
-        None
+    def test(self):
+        print("hello")
 
     def classify(self):
         None

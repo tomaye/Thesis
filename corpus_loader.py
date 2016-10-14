@@ -74,6 +74,33 @@ class CorpusLoader:
         grabbed = sentences[:n]
         return grabbed
 
+    def partition(self, labels, partitionList, shuffled=True):
+        #same as grab() but with balanced labels
+        #partitionList: list of percentages
+
+        partitioned = [ defaultdict(list) for x in partitionList]
+
+        if sum(partitionList) != 100:
+            raise ValueError("The given percentages do not sum to 100.")
+
+        else:
+
+            for label in labels:
+
+                total = len(self.data[label])
+                temp = self.data[label][:]
+                partitions = [math.floor(part*(total/100)) for part in partitionList]
+                start = 0
+                i = 0
+
+                for part in partitions:
+
+                    partitioned[i][label] += temp[start:(start + part)]
+                    start = start + part
+                    i += 1
+
+            return partitioned
+
     def get_smallest(self,listOfLabels):
         #returns the smallest label (number,label)
         smallest = len(self.data[listOfLabels[0]]),listOfLabels[0]
@@ -82,6 +109,8 @@ class CorpusLoader:
                 smallest = len(self.data[label]),label
         #print(smallest)
         return smallest
+
+
 
     def balance(self,labels = None):
         #balance the corpus with respect to the smallest class
@@ -97,22 +126,13 @@ class CorpusLoader:
             corpus[label] = self.grab(label, min)
         return corpus
 
-    def distribute(self,labels,percentages):
-        #[l1,l2,l3],[50,30,20]
-        None
-        #TODO
-
     def mergeLabel(self, labels, newLabel):
-        #merges two labels into a new one
+        #merges labels into a new one
         merged = []
         for label in labels:
             merged += self.data[label]
         self.data[newLabel] = merged
 
-        #self.data[newLabel] = [self.data[label] for label in labels]
-        #self.data[newLabel] = self.data[label1] + (self.data[label2])
-        #self.target_names.remove(label1)
-        #self.target_names.remove(label2)
         if newLabel not in self.target_names:
             self.target_names.append(newLabel)
 
@@ -129,15 +149,17 @@ class CorpusLoader:
         #print(self.data["negative"][1])
         #print(type(self.data["negative"][1]))
 
-    def toLists(self, corpus, labels):
+    def toLists(self, labels, corpus = None):
         '''
-        :param corpus:
         :param labels:
         :return:
         '''
         #samples: list of strings
         #y: target
         #mapping: mapping labels to int
+
+        if corpus == None:
+            corpus = self.data
 
         samples = []
         y = []
@@ -152,14 +174,3 @@ class CorpusLoader:
 
         return samples, np.array(y), mapping
 
-
-def main():
-    corpus = CorpusLoader()
-    file = "data/corpus/Metalogue_extractedLinks_fullCorpus.txt"
-    corpus.load(file, False)
-    #print(corpus.grab("negative",1))
-    #corpus.stats(corpus.data)
-    #corp = corpus.balance(["evidence","negative","justification"])
-    #corpus.stats(corp)
-    corpus.mergeData()
-main()

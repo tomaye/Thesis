@@ -45,13 +45,18 @@ data = {"study":["hello","world"],"explain": ["explain"], "justification":["just
 t =Taxonomie("data/corpus/Metalogue_extractedLinks_AllSessions.txt")
 #t= Taxonomie()
 #t.corpus.data = data
-print(t.corpus.data["reason"])
-t.corpus.stats()
-print("XXXXXX")
-print("\n")
+#print(t.corpus.data["reason"])
+#t.corpus.stats()
+#print("XXXXXX")
+#print("\n")
 
-#t.corpus.mergeLabel(["study","expert"],"ibm")
 t.mergeTax(t.tax)
-
 t.corpus.stats()
-print(t.corpus.data["contingency"])
+
+
+partitions =t.corpus.partition(["exception"],[50,50])
+for part in partitions:
+    x,y,m = t.corpus.toLists(["exception"],part)
+    print(x)
+    print(y)
+

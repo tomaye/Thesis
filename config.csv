@@ -1,2 +1,2 @@
-meta; meta; skipgram; coarse; False
-meta, ibm; meta; skipgram,wordpairs; fine; False
+meta;meta;skipgram;coarse;False
+meta,ibm;meta;skipgram,wordpairs;fine;False

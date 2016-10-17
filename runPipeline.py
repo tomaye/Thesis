@@ -74,7 +74,7 @@ from features import skipgrams
 
 corpusMapping = {
     "ibm": ["data/corpus/IBM_extracted_raw.txt", "data/corpus/IBM_extracted_raw_negatives.txt"],
-    "metalogue": ["data/corpus/Metalogue_extractedLinks_fullCorpus.txt","data/corpus/Metalogue_Corpus_NegativePhrases.txt"],
+    "meta": ["data/corpus/Metalogue_extractedLinks_fullCorpus.txt","data/corpus/Metalogue_Corpus_NegativePhrases.txt"],
     "forum": []
 }
 
@@ -88,25 +88,30 @@ taxonomyMapping = {
 sentenceLength = [15, 60]
 
 with open('config.csv', newline="") as csvfile:
+
     expreader = csv.reader(csvfile, delimiter=";")
+
     for exp in expreader:
         [train, test, features, level, hiera] = exp
-        print(train)
+        train = train.split(",")
+        test = test.split(",")
 
 
-pip = pipeline.Pipeline()
+        pip = pipeline.Pipeline()
 
-#Loading and assigning training data
-for corpus in train:
-    pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
-    pip.assignAsTrain(corpus)
+        #Loading and assigning training data
+        for corpus in train:
+            pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
+            pip.assignAsTrain(corpus)
 
-#Loading and assigning test data
-for corpus in test:
-    if corpus in list(pip.corpora.keys()):
-        pip.assignAsTest(corpus)
-        continue
-    else:
-        pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
-        pip.assignAsTest(corpus)
+
+        #Loading and assigning test data
+        for corpus in test:
+
+            if corpus in list(pip.corpora.keys()):
+                pip.assignAsTest(corpus)
+                continue
+            else:
+                pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
+                pip.assignAsTest(corpus)
 

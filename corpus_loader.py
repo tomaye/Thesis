@@ -130,7 +130,8 @@ class CorpusLoader:
         #merges labels into a new one
         merged = []
         for label in labels:
-            merged += self.data[label]
+            if label in self.data.keys():
+                merged += self.data[label]
         self.data[newLabel] = merged
 
         if newLabel not in self.target_names:

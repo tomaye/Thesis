@@ -10,7 +10,7 @@ class Taxonomie:
             else:
                 self.corpus = corpus_loader.CorpusLoader(corpus)
         else:
-            self.corpus = -1
+            self.corpus = corpus_loader.CorpusLoader(corpus)
             print("No valid corpus format.")
         self.tax = {"support":
                             {"contingency":
@@ -29,7 +29,7 @@ class Taxonomie:
                     }
 
 
-    def mergeTax(self, tax = None, label = None, corpus = None):
+    def mergeTax(self, tax = None, label = None):
         '''
         expands the labels of the corpus in self.corpus to cover the whole taxonomie
         :param tax: Taxonomie (needed for recursion)
@@ -40,25 +40,23 @@ class Taxonomie:
         if tax == None:
             tax = self.tax
 
-        if corpus != None:
-            self.corpus = corpus
-
         if type(tax) == dict:
 
             mergeList = []
 
             for key in tax.keys():
                     mergeList.append(key)
-
                     self.mergeTax(tax[key], key)
 
         else:
                 mergeList = tax
 
-        self.corpus.mergeLabel(mergeList, label)
+        if label != None:
+
+            self.corpus.mergeLabel(mergeList, label)
 
 
-#data = {"study":["hello","world"],"explain": ["explain"], "justification":["just","fication"], "expert":["ex", "per smpre"]}
+#data = {"study":["hello","world"],"explain": ["explain"], "justify":["just","fication"], "expert":["ex", "per smpre"]}
 
 #t =Taxonomie("data/corpus/Metalogue_extractedLinks_AllSessions.txt")
 #t= Taxonomie()
@@ -69,6 +67,7 @@ class Taxonomie:
 #print("\n")
 
 #t.mergeTax(t.tax)
+#print("XXXXXXXXXXXx")
 #t.corpus.stats()
 
 

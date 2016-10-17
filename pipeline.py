@@ -30,6 +30,7 @@ class Pipeline:
         :return: None
         '''
         self.test.append(corpus)
+        self.tax.mergeTax(self.corpora[corpus])
 
     def assignAsTrain(self, corpus):
         '''

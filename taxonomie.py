@@ -10,6 +10,7 @@ class Taxonomie:
             else:
                 self.corpus = corpus_loader.CorpusLoader(corpus)
         else:
+            self.corpus = -1
             print("No valid corpus format.")
         self.tax = {"support":
                             {"contingency":
@@ -28,7 +29,7 @@ class Taxonomie:
                     }
 
 
-    def mergeTax(self, tax = None, label = None):
+    def mergeTax(self, tax = None, label = None, corpus = None):
         '''
         expands the labels of the corpus in self.corpus to cover the whole taxonomie
         :param tax: Taxonomie (needed for recursion)
@@ -38,6 +39,9 @@ class Taxonomie:
 
         if tax == None:
             tax = self.tax
+
+        if corpus != None:
+            self.corpus = corpus
 
         if type(tax) == dict:
 

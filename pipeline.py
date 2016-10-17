@@ -2,12 +2,16 @@ from corpus_loader import CorpusLoader
 from features import modality, token_counter, skipgrams, wordpairs
 from sklearn import svm
 from sklearn import cross_validation
+import taxonomie
 
 class Pipeline:
 
 
     def __init__(self):
         self.corpora = {}
+        self.tax = taxonomie.Taxonomie()
+        self.train = []
+        self.test = []
         self.classifier =  svm.SVC(kernel='linear', C=1)
         self.features = {}
         self.X_train = -1
@@ -18,6 +22,22 @@ class Pipeline:
         #TODO
         None
 
+
+    def assignAsTest(self, corpus):
+        '''
+        assigns a corpus for testing
+        :param corpus: key of a corpus in self.corpora
+        :return: None
+        '''
+        self.test.append(corpus)
+
+    def assignAsTrain(self, corpus):
+        '''
+        assigns a corpus for training
+        :param corpus: key of a corpus in self.corpora
+        :return: None
+        '''
+        self.train.append(corpus)
 
     def load_corpus(self, name, files, min=15, max= 100, merge=True):
         '''

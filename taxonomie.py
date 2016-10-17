@@ -18,12 +18,26 @@ class Taxonomie:
 
                             "evidence":
 
-                                ["exemplification", "explain", "study"]}
+                                ["exemplification", "explain", "study"]},
+
+                    "non-supportive":
+                            {"no Label":
+
+                                ["noLabel"]}
+
                     }
 
 
+    def mergeTax(self, tax = None, label = None):
+        '''
+        expands the labels of the corpus in self.corpus to cover the whole taxonomie
+        :param tax: Taxonomie (needed for recursion)
+        :param label: needed for recursion only
+        :return: None
+        '''
 
-    def mergeTax(self, tax, label = None):
+        if tax == None:
+            tax = self.tax
 
         if type(tax) == dict:
 
@@ -40,9 +54,9 @@ class Taxonomie:
         self.corpus.mergeLabel(mergeList, label)
 
 
-data = {"study":["hello","world"],"explain": ["explain"], "justification":["just","fication"], "expert":["ex", "per smpre"]}
+#data = {"study":["hello","world"],"explain": ["explain"], "justification":["just","fication"], "expert":["ex", "per smpre"]}
 
-t =Taxonomie("data/corpus/Metalogue_extractedLinks_AllSessions.txt")
+#t =Taxonomie("data/corpus/Metalogue_extractedLinks_AllSessions.txt")
 #t= Taxonomie()
 #t.corpus.data = data
 #print(t.corpus.data["reason"])
@@ -50,13 +64,12 @@ t =Taxonomie("data/corpus/Metalogue_extractedLinks_AllSessions.txt")
 #print("XXXXXX")
 #print("\n")
 
-t.mergeTax(t.tax)
-t.corpus.stats()
+#t.mergeTax(t.tax)
+#t.corpus.stats()
 
 
-partitions =t.corpus.partition(["exception"],[50,50])
-for part in partitions:
-    x,y,m = t.corpus.toLists(["exception"],part)
-    print(x)
-    print(y)
-
+#partitions =t.corpus.partition(["exception"],[50,50])
+#for part in partitions:
+#    x,y,m = t.corpus.toLists(["exception"],part)
+#    print(x)
+#    print(y)

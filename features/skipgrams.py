@@ -145,17 +145,17 @@ class SkipgramVectorizer(DictVectorizer):
 
 #testing
 
-text = ["killed by my husband", "in the by house in the my household", "the household killed my husband"]
-y = [0, 1, 1]
+#text = ["killed by my husband", "in the by house in the my household", "the household killed my husband"]
+#y = [0, 1, 1]
 
-vec = SkipgramVectorizer()
+#vec = SkipgramVectorizer()
 
-matrix = vec.fit_transform(text)
+#matrix = vec.fit_transform(text)
 
-support = SelectKBest(chi2, 10).fit(matrix, y)
-vec.restrict(support.get_support())
+#support = SelectKBest(chi2, 10).fit(matrix, y)
+#vec.restrict(support.get_support())
 
-matrix = vec.transform(text)
+#matrix = vec.transform(text)
 
-print(vec.get_feature_names())
-print(matrix.shape)
+#print(vec.get_feature_names())
+#print(matrix.shape)

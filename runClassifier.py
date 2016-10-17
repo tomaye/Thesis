@@ -40,7 +40,7 @@ def load_corpus(name, files, merge = True):
 ##############
 ##Classifier##
 ##############
-
+row
 
 clf = svm.SVC(kernel='linear', C=1)
 

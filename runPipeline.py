@@ -74,7 +74,8 @@ from features import skipgrams
 
 corpusMapping = {
     "ibm": ["data/corpus/IBM_extracted_raw.txt", "data/corpus/IBM_extracted_raw_negatives.txt"],
-    "meta": ["data/corpus/Metalogue_extractedLinks_fullCorpus.txt","data/corpus/Metalogue_Corpus_NegativePhrases.txt"],
+    #"meta": ["data/corpus/Metalogue_extractedLinks_fullCorpus.txt","data/corpus/Metalogue_Corpus_NegativePhrases.txt"],
+    "meta": ["data/corpus/metalogue_corpus.txt", "data/corpus/Metalogue_Corpus_NegativePhrases.txt"],
     "forum": []
 }
 
@@ -104,6 +105,9 @@ with open('config.csv', newline="") as csvfile:
             pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
             pip.assignAsTrain(corpus)
 
+        pip.train = pip.mergeCorpora(pip.train)
+        pip.train.stats()
+        print("\n")
 
         #Loading and assigning test data
         for corpus in test:
@@ -115,7 +119,3 @@ with open('config.csv', newline="") as csvfile:
                 pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                 pip.assignAsTest(corpus)
 
-        #print(pip.test)
-
-        #for elem in pip.test:
-    print(pip.corpora["meta"].stats())

@@ -3,13 +3,13 @@ justification	Smoking bans are also imposed	 because they improve air quality in
 reason	Smoking bans are also imposed because they improve air quality in restaurants and other establishments.	In New York, it is now illegal to smoke in all hospitality venues.
 justification	Tobacco smoke can cause cancer, strokes and heart disease.	Smoking does not just harm the smoker it also harms people nearby, who breathe in the smoke.
 reason	Society accepts that adults can decide to harm themselves to some extent, so long as they do not harm others.	This is why the proposition is not arguing that people should be banned from smoking in private.
-justification	Workers should not be exposed to other people’s smoke	 SINCE they may not have made a free choice to do so.
+justification	Workers should not be exposed to other peopleï¿½s smoke	 SINCE they may not have made a free choice to do so.
 reason	It is legal to smoke tobacco, so governments have no right to try to make people stop.	It is therefore wrong to argue that a ban on public smoking should be introduced to encourage people to give up.
 justification	In any case, heavy smokers are unlikely to give up	 SINCE they are addicted to nicotine.
 justification	This will harm other people in their house, particularly children.	This is important, SINCE children are not old enough to choose freely to smoke passively.
 justification	Also, people smoking at home may drink more alcohol than they would if they went to a bar.	This is BECAUSE they can buy it more cheaply at a supermarket or off-licence.
 motivate	Pubs and clubs should adapt, FOR EXAMPLE by trying to earn more money from selling food.	After a ban was introduced in New South Wales (Australia), only 9% of restaurants reported a drop in trade.
-justification	In many places, pubs and Working Men’s Clubs are important social places for communities.	They also provide jobs for people with few skills in places with little other work. It is therefore important that they survive.
+justification	In many places, pubs and Working Menï¿½s Clubs are important social places for communities.	They also provide jobs for people with few skills in places with little other work. It is therefore important that they survive.
 reason	Moreover, the policy of smoking ban also covers workplaces.	Numerous countries have adopted this policy till date, and several people have voiced their varied opinions about the same.
 justification	The underlying fact, however, is that it is very difficult to land up on a firm conclusion on whether or not such bans should be imposed, and if yes, then to what extent.	A recent study showed that smoking bans imposed in public places and workplaces, resulted into lesser instances of deaths and hospitalizations due to respiratory problems, heart attacks, and cancer.
 reason	Smoking retards the growth of a foetus, and leads to increased chances of premature births. The same effect is also seen in case of the non-smokers, exposed to large amounts of second-hand smoke.	Thus, smoking bans not only lower the percentage of premature deliveries, but also help in the promotion of values regarding health from the early stages of life.
@@ -21,8 +21,8 @@ justification	Though a smoking ban may seem like a brilliant idea to control the
 justification	However, this choice poses health risks to others, ESPECIALLY when smokers light up in public areas.	Medline Plus estimates that the United States would see 18,000 fewer heart attacks within a year if each state passes a complete ban on smoking in public places.
 justification	Today, fewer people smoke	 BECAUSE of health concerns and cost, as well as bans that cities and states have imposed.
 justification	Any other diner or employee bothered by the smoke could not take legal recourse	BECAUSE the city has no sanctions against it.
-motivate	Los Gatos has already banned it and SO has the county.	I don’t think that our businesses are in as a competitive disadvantage as they may think.
-justification	But if people don’t want to patronize a restaurant BECAUSE of smoking, that’s your choice.	These are places that people go to because they can have a drink and a cigarette
+motivate	Los Gatos has already banned it and SO has the county.	I don't think that our businesses are in as a competitive disadvantage as they may think.
+justification	But if people don't want to patronize a restaurant BECAUSE of smoking, that's your choice.	These are places that people go to because they can have a drink and a cigarette
 reason	Many pubs, cafeterias and restaurants have lost patrons BECAUSE of the smoking ban.	In fact, many employees in these establishments have even lost their jobs.
 justification	Many youngsters have started smoking just BECAUSE smoking is banned.	They do so because of the attraction of the forbidden object.
 contrast	Alcohol is alSO damaging to your health.	However, sitting beside someone having a pint will not endanger MY health.
@@ -80,7 +80,7 @@ justification	Smoking should not be banned 	The people that smoke also create jo
 justification	Banning smoking would be an exercise in way too much government control.	If Marijuana is legal, smoking shouldn't be banned because it the lesser of the two evils.
 motivate	There are so many people who are already addicted to smoking so banning it altogether would be a cruel thing to do to them.	Banning smoking outdoors is seldom ethically justifiable.
 justification	Banning smoking outdoors is seldom ethically justifiable.	Such proposals "push the envelope" of tobacco control into areas where questions need to be asked to ensure tobacco control policies are firmly anchored to scientific evidence and ESPECIALLY concern those who value the freedom of individuals to do what they please to the extent that this does not harm others.
-justification	Banning outdoor smoking is not scientifically justifiable.	Simon Chapman has argued that smoking should not be banned in outdoor public venues such as hospital patios, beaches, and outdoor sporting areas, and this might also encompass building entrances, waiting lines for cinema tickets, and outdoor cafés.
+justification	Banning outdoor smoking is not scientifically justifiable.	Simon Chapman has argued that smoking should not be banned in outdoor public venues such as hospital patios, beaches, and outdoor sporting areas, and this might also encompass building entrances, waiting lines for cinema tickets, and outdoor cafs.
 justification	Simon Chapman argues that outdoor smoking bans are seldom justified	 BECAUSE they can rarely be supported from a health standpoint, and they invite backlash from the community.
 justification	We believe that outdoor smoking bans are reasonable in a number of instances and that such bans can be justified for reasons other than health.	Communities also have the right to ban nuisances --things that are generally offensive, though not necessarily harmful -- so long as fundamental individual liberties are preserved.
 justification	Chapman argues that it is wrong to completely ban smoking on hospital grounds 	because doing so would force some patients to quit against their will and violate patient autonomy.

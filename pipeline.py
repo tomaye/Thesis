@@ -65,6 +65,25 @@ class Pipeline:
 
         print(name + " loaded...")
 
+    def mergeCorpora(self, corpora):
+        '''
+        merges the corpora into one new CL object
+        :param corpora: list of self.corpora keys
+        :return: CL
+        '''
+
+        merge = []
+        for corpus in corpora:
+
+            merge.append(self.corpora[corpus])
+
+
+        CL = CorpusLoader()
+
+        CL.mergeWithCorpus(merge)
+
+        return CL
+
 
     def set_features(self, featureList):
         for feature in featureList:

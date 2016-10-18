@@ -2,7 +2,7 @@ import os
 from tkinter.filedialog import askopenfilename
 
 file = askopenfilename(initialdir=os.getcwd(), title="Select source file!")
-fileIn= open(file)
+fileIn= open(file, encoding="utf-8")
 
 
 
@@ -12,8 +12,9 @@ changeLabels = False
 
 def main():
 
+    refactor()
     #cleaner()
-    splitter()
+    #splitter()
     #tokenizer()
 
 def cleaner():
@@ -79,5 +80,23 @@ def tokenizer():
         fileOut.write(line[1]+"\n")
         fileOut.write(line[2])
     print("Done!")
+
+def refactor():
+
+    mapping = {
+        "justify":"justification",
+        "motivate":"motivation",
+        "exemplify":"exemplification"
+    }
+
+    fileOut = open("forum_corpus.txt", 'w+', encoding="utf-8")
+    for line in fileIn:
+        line = line.split("\t")
+
+        if line[0] in mapping.keys():
+            line[0] = mapping[line[0]]
+
+        fileOut.write(line[0]+"\t"+line[1]+"\t"+line[2])
+    print("DONE")
 
 main()

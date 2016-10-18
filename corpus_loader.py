@@ -150,6 +150,24 @@ class CorpusLoader:
         #print(self.data["negative"][1])
         #print(type(self.data["negative"][1]))
 
+    def mergeWithCorpus(self, corpora):
+        '''
+        merges self.data with the data of another CL object or list of CLs
+        :param corpora: list of CorpusLoader objects
+        :return: self
+        '''
+
+        for corpus in corpora:
+
+            for label in corpus.data.keys():
+                if label in self.data.keys():
+                    self.data[label] += corpus.data[label]
+                else:
+                    self.data[label] = corpus.data[label]
+
+        return self
+
+
     def toLists(self, labels, corpus = None):
         '''
         :param labels:

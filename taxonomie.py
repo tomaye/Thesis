@@ -13,11 +13,11 @@ class Taxonomie:
         self.tax = {"support":
                             {"contingency":
 
-                                ["justification", "justify", "motivate", "EXPERT"],
+                                ["justification", "cause", "reason", "motivation", "EXPERT"],
 
                             "evidence":
 
-                                ["exemplification", "explain", "STUDY", "STUDY, EXPERT", "evidence"]},
+                                ["exemplification", "exception", "explain", "STUDY", "STUDY, EXPERT"]},
 
                     "non-supportive":
                             {"no Label":

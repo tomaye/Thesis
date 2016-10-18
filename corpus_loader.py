@@ -77,6 +77,7 @@ class CorpusLoader:
     def partition(self, labels, partitionList, shuffled=True):
         #same as grab() but with balanced labels
         #partitionList: list of percentages
+        #returns a list of partitions
 
         partitioned = [ defaultdict(list) for x in partitionList]
 
@@ -101,9 +102,9 @@ class CorpusLoader:
 
             return partitioned
 
-    def get_smallest(self,listOfLabels):
+    def get_smallest(self, listOfLabels):
         #returns the smallest label (number,label)
-        smallest = len(self.data[listOfLabels[0]]),listOfLabels[0]
+        smallest = len(self.data[listOfLabels[0]]), listOfLabels[0]
         for label in listOfLabels:
             if len(self.data[label]) < smallest[0]:
                 smallest = len(self.data[label]),label
@@ -112,7 +113,7 @@ class CorpusLoader:
 
 
 
-    def balance(self,labels = None):
+    def balance(self, labels = None):
         #balance the corpus with respect to the smallest class
         #returns dict with label:[[sent1,sent2],...]
         if labels is None:

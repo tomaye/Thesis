@@ -74,9 +74,8 @@ from features import skipgrams
 
 corpusMapping = {
     "ibm": ["data/corpus/IBM_extracted_raw.txt", "data/corpus/IBM_extracted_raw_negatives.txt"],
-    #"meta": ["data/corpus/Metalogue_extractedLinks_fullCorpus.txt","data/corpus/Metalogue_Corpus_NegativePhrases.txt"],
     "meta": ["data/corpus/metalogue_corpus.txt", "data/corpus/Metalogue_Corpus_NegativePhrases.txt"],
-    "forum": []
+    "forum": ["data/corpus/forum_corpus.txt"]
 }
 
 taxonomyMapping = {
@@ -87,6 +86,8 @@ taxonomyMapping = {
 }
 
 sentenceLength = [15, 100]
+partitioning = [75, 25]
+
 
 with open('config.csv', newline="") as csvfile:
 
@@ -105,17 +106,22 @@ with open('config.csv', newline="") as csvfile:
             pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
             pip.assignAsTrain(corpus)
 
-        pip.train = pip.mergeCorpora(pip.train)
-        pip.train.stats()
-        print("\n")
 
         #Loading and assigning test data
         for corpus in test:
 
             if corpus in list(pip.corpora.keys()):
+                [train_part, test_part] = pip.corpora[corpus].partition(taxonomyMapping[level], partitioning)
+                print(train_part)
+                #pip.corpora[corpus]
                 pip.assignAsTest(corpus)
                 continue
+
             else:
                 pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                 pip.assignAsTest(corpus)
 
+        pip.train = pip.mergeCorpora(pip.train)
+
+        #pip.train.stats()
+        print("\n")

@@ -30,7 +30,6 @@ class Pipeline:
         :return: None
         '''
         self.test.append(corpus)
-        self.tax.mergeTax(self.corpora[corpus])
 
     def assignAsTrain(self, corpus):
         '''
@@ -40,7 +39,7 @@ class Pipeline:
         '''
         self.train.append(corpus)
 
-    def load_corpus(self, name, files, min=15, max= 100, merge=True):
+    def load_corpus(self, name, files, min=15, max= 100, merge=False):
         '''
         :param name: key for dictionary entry in self.corpora
         :param files: list of files
@@ -60,7 +59,9 @@ class Pipeline:
         if merge:
             CL.mergeData()
 
-        self.corpora[name] = CL
+        corpus = self.tax.expandTax(CL)
+
+        self.corpora[name] = corpus
 
         print(name + " loaded...")
 

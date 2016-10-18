@@ -9,17 +9,15 @@ class Taxonomie:
                 self.corpus = corpus
             else:
                 self.corpus = corpus_loader.CorpusLoader(corpus)
-        else:
-            self.corpus = corpus_loader.CorpusLoader(corpus)
-            print("No valid corpus format.")
+
         self.tax = {"support":
                             {"contingency":
 
-                                ["justify", "motivate", "expert"],
+                                ["justification", "justify", "motivate", "EXPERT"],
 
                             "evidence":
 
-                                ["exemplification", "explain", "study"]},
+                                ["exemplification", "explain", "STUDY", "STUDY, EXPERT", "evidence"]},
 
                     "non-supportive":
                             {"no Label":
@@ -29,7 +27,7 @@ class Taxonomie:
                     }
 
 
-    def mergeTax(self, tax = None, label = None):
+    def _mergeTax(self, tax = None, label = None):
         '''
         expands the labels of the corpus in self.corpus to cover the whole taxonomie
         :param tax: Taxonomie (needed for recursion)
@@ -46,7 +44,7 @@ class Taxonomie:
 
             for key in tax.keys():
                     mergeList.append(key)
-                    self.mergeTax(tax[key], key)
+                    self._mergeTax(tax[key], key)
 
         else:
                 mergeList = tax
@@ -54,6 +52,15 @@ class Taxonomie:
         if label != None:
 
             self.corpus.mergeLabel(mergeList, label)
+
+
+    def expandTax(self, corpus):
+
+        self.corpus = corpus
+        self._mergeTax()
+
+        return self.corpus
+
 
 
 #data = {"study":["hello","world"],"explain": ["explain"], "justify":["just","fication"], "expert":["ex", "per smpre"]}

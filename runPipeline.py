@@ -85,7 +85,7 @@ taxonomyMapping = {
 
 }
 
-sentenceLength = [15, 60]
+sentenceLength = [15, 100]
 
 with open('config.csv', newline="") as csvfile:
 
@@ -115,3 +115,7 @@ with open('config.csv', newline="") as csvfile:
                 pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                 pip.assignAsTest(corpus)
 
+        #print(pip.test)
+
+        #for elem in pip.test:
+    print(pip.corpora["meta"].stats())

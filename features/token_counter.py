@@ -1,7 +1,6 @@
 from sklearn.feature_extraction import DictVectorizer
 
 
-
 def countTokens(sentList):
     X = []
     #
@@ -16,8 +15,8 @@ def countTokens(sentList):
     vec = DictVectorizer()
     matrix = vec.fit_transform(X)
 
-    print("TOKEN")
-    print(type(matrix))
-    print(matrix.size)
+    #print("TOKEN")
+    #print(type(matrix))
+    #print(matrix.shape)
 
     return matrix

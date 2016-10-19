@@ -2,7 +2,11 @@ from corpus_loader import CorpusLoader
 from features import modality, token_counter, skipgrams, wordpairs
 from sklearn import svm
 from sklearn import cross_validation
+from sklearn.feature_selection import SelectKBest, chi2
 import taxonomie
+import scipy.sparse as sp
+import numpy as np
+
 
 class Pipeline:
 
@@ -11,9 +15,12 @@ class Pipeline:
         self.corpora = {}
         self.tax = taxonomie.Taxonomie()
         self.train = []
+        self.train_unified = []
         self.test = []
+        self.test_unified = []
         self.classifier =  svm.SVC(kernel='linear', C=1)
-        self.features = {}
+        self.feature_models = {}
+        self.feature_list = []
         self.X_train = -1
         self.X_test = -1
         self.y_train = -1
@@ -86,8 +93,9 @@ class Pipeline:
 
 
     def set_features(self, featureList):
+        self.feature_list = featureList
         for feature in featureList:
-            self.features[feature] = -1
+            self.feature_models[feature] = -1
 
     def get_labels(self, corpus):
 
@@ -97,41 +105,89 @@ class Pipeline:
             None
             #TODO
 
-    def preprocessing(self, corpus, labels, balance = True):
+    def _unify_data(self, samples):
         '''
-        :param corpus: dict key for CL object in self.corpora
-        :param labels: list of used labels from the corpus
-        :param balance: states if the classes should be balanced
-        :return: TODO
+        convertes [ [pre,suc], ...] in [ [unified], ... ]
+        :param samples: list of instances
+        :return: unified data
         '''
 
-        corpus_raw = self.corpora[corpus]
-        matrix = -1
+        unified = [pre + " " + suc for [pre,suc] in samples]
 
-        if balance:
-            corpus_final = corpus_raw.balance(labels)
-        else:
-            corpus_final = corpus_raw.data
+        return unified
 
-        X_train, y_train, train_mapping = corpus_raw.toLists(corpus_final, labels)
+    def _get_model(self, feature):
+        '''
+        computes the vector/matrix for feature and returns a DictVectorizer
+        :param feature: feature name
+        :return: vec: DictVectorzier, train/test_matrix: matrix from self.train/self.test fitted on vec
+        '''
 
-        for feature in self.features.keys():
-            None
+        if feature == "skipgrams":
 
-        return matrix
+            vec = skipgrams.SkipgramVectorizer()
+            matrix = vec.fit_transform(self.train_unified)
 
-    def test(self):
-        print("hello")
+            support = SelectKBest(chi2, 100).fit(matrix, self.y_train)
+            vec.restrict(support.get_support())
+
+            train_matrix = vec.transform(self.train_unified)
+            test_matrix = vec.transform(self.test_unified)
+
+            return vec, train_matrix, test_matrix
+
+        if feature == "#tokens":
+
+            train_matrix = token_counter.countTokens(self.train_unified)
+            test_matrix = token_counter.countTokens(self.test_unified)
+
+            return None, train_matrix, test_matrix
+
+
+    def train_model(self):
+        '''
+        calls the computation of each feature in self.feature_list
+        builds self.X_train, self.X_test matrices and fits classifier on the trainings data
+        :return: None
+        '''
+
+        self.train_unified = self._unify_data(self.train)
+        self.test_unified = self._unify_data(self.test)
+
+        for feature in self.feature_list:
+            model, train, test = self._get_model(feature)
+            self.feature_models[feature] = model
+
+            if type(self.X_train) == int:
+                self.X_train = train
+            else:
+                self.X_train = sp.hstack((self.X_train, train), format="csr")
+
+            if type(self.X_test) == int:
+                self.X_test = test
+            else:
+                self.X_test = sp.hstack((self.X_test, test), format="csr")
+
+        self.classifier.fit(self.X_train, self.y_train)
+
+
+    def predict(self):
+        '''
+        predicts the test data on the trained model
+        :return:
+        '''
+        predicted = self.classifier.predict(self.X_test)
+        print(np.mean(predicted == self.y_test))
 
     def classify(self):
         None
 
     def cross_validation(self):
-        scores = cross_validation.cross_val_score(self.classifier, self.X_train, self.y_train, cv=5)
 
+        scores = cross_validation.cross_val_score(self.classifier, self.X_train, self.y_train, cv=5)
         print("\n")
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-        print("The following features have been used: " + str(self.features.keys()))
+        print("The following features have been used: " + str(self.feature_list))
 
     def set_classifier(self, classifier):
         self.classifier = classifier

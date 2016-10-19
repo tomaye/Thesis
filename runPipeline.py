@@ -4,23 +4,6 @@ from sklearn.feature_selection import SelectKBest, chi2
 from features import skipgrams
 
 
-#pipe = pipeline.Pipeline()
-#pipe = pipeline.Pipeline()
-#tax = taxonomie.Taxonomie()
-
-
-#metalogue = ["data/corpus/Metalogue_extractedLinks_fullCorpus.txt","data/corpus/Metalogue_Corpus_NegativePhrases.txt"]
-#IBM = ["data/corpus/IBM_extracted_raw.txt", "data/corpus/IBM_extracted_raw_negatives.txt"]
-
-#corp1 = "meta"
-#corp2 = "ibm"
-
-#pipe.load_corpus(corp1, metalogue)
-#pipe.load_corpus(corp2,IBM)
-
-#pipe.get_labels(corp1)
-
-#pipe.preprocessing(corp1,["NoLabel", "justification", "evidence"])
 
 
 #text = ["killed by my husband", "in the by house in the my household", "the household killed my husband"]
@@ -36,37 +19,6 @@ from features import skipgrams
 #matrix = vec.transform(text)
 
 
-##################################################
-
-
-#tax = taxonomie.Taxonomie()
-
-
-#metalogue = ["data/corpus/Metalogue_extractedLinks_fullCorpus.txt","data/corpus/Metalogue_Corpus_NegativePhrases.txt"]
-#IBM = ["data/corpus/IBM_extracted_raw.txt", "data/corpus/IBM_extracted_raw_negatives.txt"]
-
-#corp1 = "meta"
-#corp2 = "ibm"
-
-#pipe.load_corpus(corp1, metalogue)
-#pipe.load_corpus(corp2,IBM)
-
-#pipe.get_labels(corp1)
-
-#pipe.preprocessing(corp1,["NoLabel", "justification", "evidence"])
-
-
-#text = ["killed by my husband", "in the by house in the my household", "the household killed my husband"]
-#y = [0, 1, 1]
-
-#vec = skipgrams.SkipgramVectorizer()
-
-#matrix = vec.fit_transform(text)
-
-#support = SelectKBest(chi2, 10).fit(matrix, y)
-#vec.restrict(support.get_support())
-
-#matrix = vec.transform(text)
 
 
 ##################################################
@@ -97,6 +49,7 @@ with open('config.csv', newline="") as csvfile:
         [train, test, features, level, hiera] = exp
         train = train.split(",")
         test = test.split(",")
+        features = features.split(",")
 
 
         pip = pipeline.Pipeline()
@@ -110,7 +63,14 @@ with open('config.csv', newline="") as csvfile:
         #Loading and assigning test data
         for corpus in test:
 
+            if test == train:
+                cv = True
+                pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
+                pip.assignAsTest(corpus)
+                break
+
             if corpus in list(pip.corpora.keys()):
+                cv = False
                 [train_part, test_part] = pip.corpora[corpus].partition(taxonomyMapping[level], partitioning)
                 pip.corpora[corpus+"_train"]  = train_part
                 pip.corpora[corpus+"_test"] = test_part
@@ -124,16 +84,30 @@ with open('config.csv', newline="") as csvfile:
                 pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                 pip.assignAsTest(corpus)
 
+        #merge corpora to one CL object each
         pip.train = pip.mergeCorpora(pip.train)
         pip.test = pip.mergeCorpora(pip.test)
 
+        #to lists
+        pip.train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
+        pip.test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
 
-        pip_train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
-        pip_test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
+        #pip_train:
+        #  [ ["pre","suc"], ..., ["pre","suc"] ]
+        #y_train:
+        #  [1, 2, ..., 3, 2]
 
+        #set features
+        pip.set_features(features)
+        pip.train_model()
 
-        print(pip.train.containing)
-        pip.train.stats()
-        print("\n")
-        print(pip.test.containing)
-        pip.test.stats()
+        if cv:
+            pip.cross_validation()
+        else:
+            pip.predict()
+
+        #print(pip.train_unified)
+        #print(pip.feature_models)
+        print(pip.X_train.shape)
+        print(pip.X_test.shape)
+

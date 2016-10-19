@@ -73,12 +73,12 @@ class Pipeline:
         '''
 
         merge = []
+        CL = CorpusLoader()
+
         for corpus in corpora:
 
             merge.append(self.corpora[corpus])
-
-
-        CL = CorpusLoader()
+            CL.containing.append(corpus)
 
         CL.mergeWithCorpus(merge)
 

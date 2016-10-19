@@ -112,9 +112,12 @@ with open('config.csv', newline="") as csvfile:
 
             if corpus in list(pip.corpora.keys()):
                 [train_part, test_part] = pip.corpora[corpus].partition(taxonomyMapping[level], partitioning)
-                print(train_part)
-                #pip.corpora[corpus]
-                pip.assignAsTest(corpus)
+                pip.corpora[corpus+"_train"]  = train_part
+                pip.corpora[corpus+"_test"] = test_part
+                del pip.corpora[corpus]
+                pip.train.remove(corpus)
+                pip.assignAsTrain(corpus+"_train")
+                pip.assignAsTest(corpus+"_test")
                 continue
 
             else:
@@ -122,6 +125,15 @@ with open('config.csv', newline="") as csvfile:
                 pip.assignAsTest(corpus)
 
         pip.train = pip.mergeCorpora(pip.train)
+        pip.test = pip.mergeCorpora(pip.test)
 
-        #pip.train.stats()
+
+        pip_train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
+        pip_test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
+
+
+        print(pip.train.containing)
+        pip.train.stats()
         print("\n")
+        print(pip.test.containing)
+        pip.test.stats()

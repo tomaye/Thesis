@@ -11,11 +11,12 @@ class CorpusLoader:
     def __init__(self, file=None, min = None, max = None):
         self.data = defaultdict(list)
         self.target_names = []
+        self.containing = []
         if file != None:
             self.load(file,min, max)
 
 
-    def add_Corpus(self,path, min, max):
+    def add_Corpus(self, path, min, max):
         #combines another corpus with the current
         temp = self.target_names
         self.load(path, min, max)
@@ -79,7 +80,8 @@ class CorpusLoader:
         #partitionList: list of percentages
         #returns a list of partitions
 
-        partitioned = [ defaultdict(list) for x in partitionList]
+        #partitioned = [ defaultdict(list) for x in partitionList]
+        partitioned = [CorpusLoader() for x in partitionList]
 
         if sum(partitionList) != 100:
             raise ValueError("The given percentages do not sum to 100.")
@@ -96,7 +98,7 @@ class CorpusLoader:
 
                 for part in partitions:
 
-                    partitioned[i][label] += temp[start:(start + part)]
+                    partitioned[i].data[label] += temp[start:(start + part)]
                     start = start + part
                     i += 1
 
@@ -171,8 +173,9 @@ class CorpusLoader:
 
     def toLists(self, labels, corpus = None):
         '''
-        :param labels:
-        :return:
+        converts CL object into samples, y and a mapping
+        :param labels: labels which should be used
+        :return: samples: list of instances; y: target list; mapping: mapping between y and labels
         '''
         #samples: list of strings
         #y: target

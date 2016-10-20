@@ -156,6 +156,15 @@ class Pipeline:
 
             return vec, train_matrix, test_matrix
 
+        if feature == "modals":
+
+            vec = modality.ModelVectozier()
+
+            train_matrix = vec.check_modality(self.train_unified)
+            test_matrix = vec.check_modality(self.test_unified)
+
+            return None, train_matrix, test_matrix
+
 
     def train_model(self):
         '''

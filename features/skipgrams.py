@@ -80,7 +80,7 @@ class SkipgramVectorizer(DictVectorizer):
             skipgramList = list(self.skipgrams(sent.split(), n, k))
 
             for skipgram in skipgramList:
-                dict[skipgram] += 1
+                dict[skipgram] = 1
             skips.append(dict)
 
         return skips
@@ -141,21 +141,3 @@ class SkipgramVectorizer(DictVectorizer):
 
         return self
 
-
-
-#testing
-
-#text = ["killed by my husband", "in the by house in the my household", "the household killed my husband"]
-#y = [0, 1, 1]
-
-#vec = SkipgramVectorizer()
-
-#matrix = vec.fit_transform(text)
-
-#support = SelectKBest(chi2, 10).fit(matrix, y)
-#vec.restrict(support.get_support())
-
-#matrix = vec.transform(text)
-
-#print(vec.get_feature_names())
-#print(matrix.shape)

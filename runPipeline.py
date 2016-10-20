@@ -92,7 +92,8 @@ with open('config.csv', newline="") as csvfile:
         pip.train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
         pip.test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
 
-        #pip_train:
+
+        #pip.train:
         #  [ ["pre","suc"], ..., ["pre","suc"] ]
         #y_train:
         #  [1, 2, ..., 3, 2]

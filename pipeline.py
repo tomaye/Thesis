@@ -143,6 +143,19 @@ class Pipeline:
 
             return None, train_matrix, test_matrix
 
+        if feature == "wordpairs":
+
+            vec = wordpairs.WordpairVectorizer()
+            matrix = vec.fit_transform(self.train)
+
+            support = SelectKBest(chi2, 100).fit(matrix, self.y_train)
+            vec.restrict(support.get_support())
+
+            train_matrix = vec.transform(self.train)
+            test_matrix = vec.transform(self.test)
+
+            return vec, train_matrix, test_matrix
+
 
     def train_model(self):
         '''

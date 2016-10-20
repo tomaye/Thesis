@@ -4,26 +4,6 @@ from sklearn.feature_selection import SelectKBest, chi2
 from features import skipgrams
 
 
-
-
-#text = ["killed by my husband", "in the by house in the my household", "the household killed my husband"]
-#y = [0, 1, 1]
-
-#vec = skipgrams.SkipgramVectorizer()
-
-#matrix = vec.fit_transform(text)
-
-#support = SelectKBest(chi2, 10).fit(matrix, y)
-#vec.restrict(support.get_support())
-
-#matrix = vec.transform(text)
-
-
-
-
-##################################################
-
-
 corpusMapping = {
     "ibm": ["data/corpus/IBM_extracted_raw.txt", "data/corpus/IBM_extracted_raw_negatives.txt"],
     "meta": ["data/corpus/metalogue_corpus.txt", "data/corpus/Metalogue_Corpus_NegativePhrases.txt"],
@@ -92,7 +72,7 @@ with open('config.csv', newline="") as csvfile:
         pip.train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
         pip.test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
 
-
+        print(pip.train[0])
         #pip.train:
         #  [ ["pre","suc"], ..., ["pre","suc"] ]
         #y_train:

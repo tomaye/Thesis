@@ -66,6 +66,9 @@ class Pipeline:
         if merge:
             CL.mergeData()
 
+        CL.containing.append(name)
+        CL.tokenize()
+
         corpus = self.tax.expandTax(CL)
 
         self.corpora[name] = corpus

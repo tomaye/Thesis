@@ -1,19 +1,20 @@
 import os
 from collections import defaultdict
-from nltk.stem import WordNetLemmatizer
 from random import shuffle
 import math
 import numpy as np
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
 class CorpusLoader:
-    '''loads and distributes training and test data'''
+    '''loads and distributes data'''
 
     def __init__(self, file=None, min = None, max = None):
         self.data = defaultdict(list)
         self.target_names = []
         self.containing = []
         if file != None:
-            self.load(file,min, max)
+            self.load(file, min, max)
 
 
     def add_Corpus(self, path, min, max):
@@ -23,13 +24,42 @@ class CorpusLoader:
         newTargets = set(temp + self.target_names)
         self.target_names = list(newTargets)
 
+    def _tokenize(self, sentList):
+
+        tokenized = []
+
+        for sent in sentList:
+
+            if "meta" in self.containing:
+                sent = sent.lower()
+
+            words = word_tokenize(sent, "english")
+
+            stopwordList = set(stopwords.words("english"))
+            stopwordList.add("'s")
+            filtered = [w for w in words if w not in stopwordList]
+
+            joined = ' '.join(str(elem) for elem in filtered)
+
+            tokenized.append(joined)
+
+        return tokenized
+
+    def tokenize(self):
+
+        for label in self.data.keys():
+
+            self.data[label] = [self._tokenize(sentPair) for sentPair in self.data[label]]
+
+        return self
+
 
     def load(self, path, min = None, max = None):
         #loads corpus into self.data
         #min = minLength of phrase
         #max = MaxLength of phrase
 
-        file = open(os.getcwd()+"/"+ path)
+        file = open(os.getcwd()+"/" + path)
 
         for line in file:
             line = line.split("\t")

@@ -42,8 +42,12 @@ def filter_stopwords(words):
 
     stopwordList = set(stopwords.words("english"))
     stopwordList.add("'s")
-    filtered = [w for w in words if not w in stopwordList]
 
+    #print("above" in stopwordList)
+
+    filtered = [w for w in words if w not in stopwordList]
+
+    filtered = ' '.join(str(elem) for elem in filtered)
     return filtered
 
 def tokenize(text):
@@ -57,8 +61,13 @@ def main():
 
     text = "Praveen Attri claims genetic reasons to be largely responsible for social deviance	Praveen Attri claims genetic reasons to be largely responsible for social deviance"
     text = "a 1984 Supreme Court decision in City Council of Los Angeles v. Taxpayers for Vincent, where the majority stated that, the First Amendment does not guarantee the right to employ every"
+    text = "Los Gatos has already banned it and SO has the county.	I don't think that our businesses are in as a competitive disadvantage as they may think."
+    text = "AND LET ME ANNOUNCE MYSELF IN TELLING TO YOU HOW IS THIS SO BAD AND HOW THIS CAN LEAD TO DEFLOODKY'S ARGUMENT"
 
+
+    text = text.lower()
     words= tokenize(text)
-    print(ner_tags(lemmatize((words))))
+    #print(words)
+    print(filter_stopwords(words))
 
 main()

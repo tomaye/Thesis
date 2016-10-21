@@ -1,7 +1,7 @@
 from corpus_loader import CorpusLoader
 from features import modality, token_counter, skipgrams, wordpairs
-from sklearn import svm
-from sklearn import cross_validation
+from sklearn import svm, cross_validation
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
 import taxonomie
 import scipy.sparse as sp
@@ -25,9 +25,11 @@ class Pipeline:
         self.X_test = -1
         self.y_train = -1
         self.y_test = -1
-
-        #TODO
-        None
+        self.max_features = {
+                            "ngrams": 500,
+                            "skipgrams": 500,
+                            "wordpairs": 500
+                             }
 
 
     def assignAsTest(self, corpus):
@@ -131,7 +133,7 @@ class Pipeline:
             vec = skipgrams.SkipgramVectorizer()
             matrix = vec.fit_transform(self.train_unified)
 
-            support = SelectKBest(chi2, 100).fit(matrix, self.y_train)
+            support = SelectKBest(chi2, self.max_features[feature]).fit(matrix, self.y_train)
             vec.restrict(support.get_support())
 
             train_matrix = vec.transform(self.train_unified)
@@ -151,7 +153,7 @@ class Pipeline:
             vec = wordpairs.WordpairVectorizer()
             matrix = vec.fit_transform(self.train)
 
-            support = SelectKBest(chi2, 100).fit(matrix, self.y_train)
+            support = SelectKBest(chi2, self.max_features[feature]).fit(matrix, self.y_train)
             vec.restrict(support.get_support())
 
             train_matrix = vec.transform(self.train)
@@ -167,6 +169,15 @@ class Pipeline:
             test_matrix = vec.check_modality(self.test_unified)
 
             return None, train_matrix, test_matrix
+
+        if feature == "ngrams":
+
+            vec = TfidfVectorizer(ngram_range=(1, 2), max_features=self.max_features[feature])
+
+            train_matrix = vec.fit_transform(self.train_unified)
+            test_matrix = vec.transform(self.test_unified)
+
+            return vec, train_matrix, test_matrix
 
 
     def train_model(self):

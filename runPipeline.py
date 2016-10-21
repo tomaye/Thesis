@@ -72,11 +72,19 @@ with open('config.csv', newline="") as csvfile:
         pip.train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
         pip.test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
 
-        print(pip.train[0])
+        #print(pip.train[0])
+
         #pip.train:
         #  [ ["pre","suc"], ..., ["pre","suc"] ]
         #y_train:
         #  [1, 2, ..., 3, 2]
+
+        #set max_feature:
+        pip.max_features = {
+                            "ngrams": 100,
+                            "skipgrams": 500,
+                            "wordpairs": 500
+                             }
 
         #set features
         pip.set_features(features)

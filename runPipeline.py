@@ -72,7 +72,7 @@ with open('config.csv', newline="") as csvfile:
         pip.train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
         pip.test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
 
-        #print(pip.train[0])
+        print(pip.train_unified[0:10])
 
         #pip.train:
         #  [ ["pre","suc"], ..., ["pre","suc"] ]
@@ -89,6 +89,9 @@ with open('config.csv', newline="") as csvfile:
         #set features
         pip.set_features(features)
         pip.train_model()
+
+        #print(pip.train_unified[-5:])
+        #print(pip.y_train[-5:])
 
         if cv:
             pip.cross_validation()

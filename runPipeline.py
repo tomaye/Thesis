@@ -18,7 +18,8 @@ taxonomyMapping = {
 }
 
 sentenceLength = [15, 100]
-partitioning = [75, 25]
+partitioning = [20, 20, 20, 20, 20]
+#partitioning = [70, 30]
 
 
 with open('config.csv', newline="") as csvfile:
@@ -51,55 +52,75 @@ with open('config.csv', newline="") as csvfile:
 
             if corpus in list(pip.corpora.keys()):
                 cv = False
-                [train_part, test_part] = pip.corpora[corpus].partition(taxonomyMapping[level], partitioning)
-                pip.corpora[corpus+"_train"]  = train_part
-                pip.corpora[corpus+"_test"] = test_part
-                del pip.corpora[corpus]
-                pip.train.remove(corpus)
-                pip.assignAsTrain(corpus+"_train")
-                pip.assignAsTest(corpus+"_test")
+                if len(partitioning) == 2:
+                    [train_part, test_part] = pip.corpora[corpus].partition(taxonomyMapping[level], partitioning)
+                    print(type(train_part))
+                    pip.corpora[corpus + "_train"] = train_part
+                    pip.corpora[corpus + "_test"] = test_part
+                    del pip.corpora[corpus]
+                    pip.train.remove(corpus)
+                    pip.assignAsTrain(corpus + "_train")
+                    pip.assignAsTest(corpus + "_test")
+
+                if len(partitioning) == 5:
+                    [part1, part2, part3, part4, part5] = pip.corpora[corpus].partition(taxonomyMapping[level], partitioning)
+                    #train_part = part1.mergeWithCorpus([part2, part3, part4])
+                    #print(type(train_part))
+                    pip.corpora[corpus + "_train"] = part2
+                    pip.corpora[corpus + "_test"] = part5
+                    del pip.corpora[corpus]
+                    pip.train.remove(corpus)
+                    pip.assignAsTrain(corpus + "_train")
+                    pip.assignAsTest(corpus + "_test")
+
                 continue
 
             else:
                 pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                 pip.assignAsTest(corpus)
 
-        #merge corpora to one CL object each
-        pip.train = pip.mergeCorpora(pip.train)
-        pip.test = pip.mergeCorpora(pip.test)
+        for i in range(1, 5):
 
-        #to lists
-        pip.train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
-        pip.test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
+            print(type(pip.train))
+            #merge corpora to one CL object each
+            pip.train = pip.mergeCorpora(pip.train)
+            pip.test = pip.mergeCorpora(pip.test)
 
-        #print(pip.train_unified[0:10])
+            #to lists
+            pip.train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
+            pip.test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
 
-        #pip.train:
-        #  [ ["pre","suc"], ..., ["pre","suc"] ]
-        #y_train:
-        #  [1, 2, ..., 3, 2]
+            #pip.train:
+            #  [ ["pre","suc"], ..., ["pre","suc"] ]
+            #y_train:
+            #  [1, 2, ..., 3, 2]
 
-        #set max_feature:
-        pip.max_features = {
-                            "ngrams": 100,
-                            "skipgrams": 500,
-                            "wordpairs": 500
-                             }
+            #set max_feature:
+            pip.max_features = {
+                                "ngrams": 100,
+                                "skipgrams": 500,
+                                "wordpairs": 500
+                                 }
 
-        #set features
-        pip.set_features(features)
-        pip.train_model()
+            #set features
+            pip.set_features(features)
+            pip.train_model()
 
-        #print(pip.train_unified[-5:])
-        #print(pip.y_train[-5:])
+            if cv:
+                pip.cross_validation()
+            else:
+                pip.predict()
 
-        if cv:
-            pip.cross_validation()
-        else:
-            pip.predict()
+            #own cv
+            if len(partitioning) < 5:
+                break
+            else:
+                print(train)
+                break
+                #print(len(partitioning))
 
         #print(pip.train_unified)
         #print(pip.feature_models)
-        print(pip.X_train.shape)
-        print(pip.X_test.shape)
+        #print(pip.X_train.shape)
+        #print(pip.X_test.shape)
 

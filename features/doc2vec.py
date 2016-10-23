@@ -69,12 +69,17 @@ def get_train_X(model, n):
 
 
 def transform(model, text):
+    '''
+    builds a vector for each sentence in text
+    :param model: doc2vec model
+    :param text: list of sentences [[sent], ..., [sent]]
+    :return: array of all vectors
+    '''
 
-    X = []
+    X = test_arrays = numpy.zeros((len(text), 100))
 
-    for sent in text:
-        vec = model.infer_vector(sent.split())
-        X.append(vec)
+    for i in range(0, len(text)):
+        X[i] = model.infer_vector(text[i].split())
 
     return X
 

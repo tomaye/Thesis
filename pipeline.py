@@ -1,5 +1,5 @@
 from corpus_loader import CorpusLoader
-from features import modality, token_counter, skipgrams, wordpairs
+from features import modality, token_counter, skipgrams, wordpairs, doc2vec
 from sklearn import svm, cross_validation
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
@@ -179,6 +179,21 @@ class Pipeline:
 
             return vec, train_matrix, test_matrix
 
+        if feature == "doc2vec":
+
+            #load existing model
+            #model = Doc2Vec.load(fname)
+
+            #train model
+            model = doc2vec.train_model(doc2vec.prep_data(self.train_unified))
+
+            #save model
+            #model.save(fname)
+
+            train_matrix = doc2vec.get_train_X(model, len(self.train_unified))
+            test_matrix = doc2vec.transform(model, self.test_unified)
+
+            return model, train_matrix, test_matrix
 
     def train_model(self):
         '''

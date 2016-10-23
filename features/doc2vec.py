@@ -15,63 +15,95 @@ mapping = {0: "ham", 1: "spam"}
 
 class LabeledLineSentence(object):
 
-    def __init__(self, samples, y, mapping):
+    def __init__(self, samples):
         self.samples = samples
-        self.y = y
-        self.mapping = mapping
 
     def __iter__(self):
         for i in range(0, len(self.samples)):
-                print(i)
-                #print(self.samples[i].split(), [self.mapping[self.y[i]]])
-                yield LabeledSentence(self.samples[i].split(), [self.mapping[self.y[i]]+"_"+str(i)])
+                yield LabeledSentence(self.samples[i].split(), [str(i)])
 
 
     def to_array(self):
         self.sentences = []
         for i in range(0, len(self.samples)):
-                    self.sentences.append(LabeledSentence(self.samples[i].split(), [self.mapping[self.y[i]]+"_"+str(i)]))
-        print(self.sentences)
+                    self.sentences.append(LabeledSentence(self.samples[i].split(), [str(i)]))
         return self.sentences
 
     def sentences_perm(self):
         shuffle(self.sentences)
         return self.sentences
 
-sentences = LabeledLineSentence(text, y, mapping)
 
-model = Doc2Vec(min_count=1, size=100)
-model.build_vocab(sentences.to_array())
-#model.build_vocab(sentences.to_array())
+def prep_data(text):
+    '''
+    converts text data into gensim readable LabeledSentence objects
+    :param text: [[text], ..., [text]]
+    :return: list of LabeledSentence
+    '''
+    sentences = LabeledLineSentence(text)
 
-for epoch in range(10):
-    model.train(sentences.sentences_perm())
+    return sentences
 
-# manually control the learning rate over 10 epochs
-#for epoch in range(10):
-    #model.train(sentences)
-    #model.alpha -= 0.002  # decrease the learning rate
-    #model.min_alpha = model.alpha  # fix the learning rate, no decay
+def train_model(sentences):
+    '''
+    trains a doc2vec model
+    :param sentences: list of LabeledSentence
+    :return:
+    '''
+    model = Doc2Vec(min_count=1, size=100)
+    model.build_vocab(sentences.to_array())
+
+    for epoch in range(10):
+        model.train(sentences.sentences_perm())
+
+    return model
+
+def get_train_X(model, n):
+
+    train_arrays = numpy.zeros((n, 100))
+
+    for i in range(0, n):
+        train_arrays[i] = model.docvecs[str(i)]
+
+    return train_arrays
 
 
-#print (model.most_similar("people"))
-#print(model.docvecs["ham_0"])
+def transform(model, text):
+
+    X = []
+
+    for sent in text:
+        vec = model.infer_vector(sent.split())
+        X.append(vec)
+
+    return X
+
 
 #train
+def testing():
+    print("TESTING")
+    n = len(text)
 
-n = len(text)
+    model = train_model(prep_data(text))
 
-train_arrays = numpy.zeros((10, 100))
-test_arrays = numpy.zeros((5, 100))
-#train_labels = numpy.zeros(n)
+    train_arrays = numpy.zeros((10, 100))
+    test_arrays = numpy.zeros((5, 100))
+    #train_labels = numpy.zeros(n)
 
-for i in range(0, 10):
-    train_arrays[i] = model.docvecs[mapping[y[i]]+"_"+str(i)]
+    for i in range(0, 10):
+        train_arrays[i] = model.docvecs[str(i)]
 
-for i in range(0, 5):
-    test_arrays[i] = model.docvecs[mapping[y[i+5]]+"_"+str(i+5)]
+    for i in range(0, 5):
+        test_arrays[i] = model.docvecs[str(i+5)]
 
 
-classifier = svm.SVC(kernel='linear', C=1)
-classifier.fit(train_arrays, y[:10])
-print(classifier.score(test_arrays, y[-5:]))
+
+    classifier = svm.SVC(kernel='linear', C=1)
+    classifier.fit(train_arrays, y[:10])
+    print(classifier.score(test_arrays, y[-5:]))
+
+    test = ["hello world", "i like trees"]
+
+    print(transform(model, test))
+
+#testing()

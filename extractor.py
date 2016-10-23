@@ -46,7 +46,7 @@ def print2File(filename, length = 4,  putLabelFirst = True):
         if length == 3:
             if putLabelFirst:
                 for elem in extracted:
-                    file.write(elem[2]+"\t"+elem[1]+"\t"+elem[1]+"\n")
+                    file.write(elem[2]+"\t"+elem[0]+"\t"+elem[1]+"\n")
             else:
                 for elem in extracted:
                     file.write(elem[0]+"\t"+elem[1]+"\t"+elem[2]+"\n")

@@ -75,7 +75,7 @@ class Pipeline:
 
         self.corpora[name] = corpus
 
-        print(name + " loaded...")
+        #print(name + " loaded...")
 
     def mergeCorpora(self, corpora):
         '''
@@ -229,6 +229,8 @@ class Pipeline:
         '''
         predicted = self.classifier.predict(self.X_test)
         print(np.mean(predicted == self.y_test))
+
+        return np.array(predicted)
 
     def classify(self):
         None

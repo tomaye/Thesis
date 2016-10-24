@@ -18,7 +18,7 @@ taxonomyMapping = {
 
 sentenceLength = [15, 100]
 partitioning = [20, 20, 20, 20, 20]
-#partitioning = [70, 30]
+partitioning = [70, 30]
 
 
 with open('config.csv', newline="") as csvfile:
@@ -33,6 +33,7 @@ with open('config.csv', newline="") as csvfile:
 
 
         pip = pipeline.Pipeline()
+        parts = []
 
         #Loading and assigning training data
         for corpus in train:
@@ -60,12 +61,12 @@ with open('config.csv', newline="") as csvfile:
                     pip.assignAsTrain(corpus + "_train")
                     pip.assignAsTest(corpus + "_test")
 
+
                 if len(partitioning) == 5:
                     parts = pip.corpora[corpus].partition(taxonomyMapping[level], partitioning)
-                    #for part in parts:
-                    #    print(part.stats())
-                    part_list = parts[:]
-                    train_part = part_list[0].mergeWithCorpus([part_list[1],part_list[2],part_list[3]])
+                    #part_list = parts
+                    part_list = [cl.clone() for cl in parts]
+                    train_part = part_list[0].mergeWithCorpus([part_list[1], part_list[2], part_list[3]])
                     pip.corpora[corpus + "_train"] = train_part
                     pip.corpora[corpus + "_test"] = part_list[4]
                     del pip.corpora[corpus]
@@ -82,13 +83,10 @@ with open('config.csv', newline="") as csvfile:
         scores = []
 
         for i in range(1, len(partitioning)+1):
-
             #merge corpora to one CL object each
             pip.train = pip.mergeCorpora(pip.train)
             pip.test = pip.mergeCorpora(pip.test)
 
-            print(len(pip.train.stats()))
-            print(len(pip.test.stats()))
             #to lists
             pip.train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
             pip.test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
@@ -113,17 +111,13 @@ with open('config.csv', newline="") as csvfile:
                 pip.cross_validation()
             else:
                 predicted = pip.predict()
-                print(len(pip.y_train))
-                print(len(pip.y_test))
-                print(len(predicted))
                 scores.append(predicted)
 
 
             #own cv
             if len(partitioning) < 5:
-                print("BREAK")
                 break
-            else:
+            elif parts != []:
 
                 pip = pipeline.Pipeline()
 
@@ -132,11 +126,10 @@ with open('config.csv', newline="") as csvfile:
                         continue
                     pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                     pip.assignAsTrain(corpus)
-                    #print(corpus+" loaded")
 
                 for corpus in test:
                     if corpus in train:
-                        part_list = parts[:]
+                        part_list = [cl.clone() for cl in parts]
                         indices = [[0, 1, 2, 3, 4], [1, 2, 3, 4, 0], [2, 3, 4, 0, 1], [3, 4, 0, 1, 2],[4, 0, 1, 2, 3]]
                         train_part = part_list[indices[i-1][1]].mergeWithCorpus([part_list[indices[i-1][2]],part_list[indices[i-1][3]],part_list[indices[i-1][4]]])
                         test_part = part_list[indices[i-1][0]]
@@ -148,10 +141,10 @@ with open('config.csv', newline="") as csvfile:
                         pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                         pip.assignAsTest(corpus)
 
-
-        #scores = np.array(scores)
-        #print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
-        #print("The following features have been used: " + str(pip.feature_list))
+        if len(partitioning) == 5:
+            scores = np.array(scores)
+            print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+            print("The following features have been used: " + str(features))
 
 
 

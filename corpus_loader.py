@@ -24,6 +24,23 @@ class CorpusLoader:
         newTargets = set(temp + self.target_names)
         self.target_names = list(newTargets)
 
+    def clone(self):
+        '''
+        deep copy of CL object
+        :return: new CL object
+        '''
+
+        CL = CorpusLoader()
+        for key in self.data.keys():
+            CL.data[key] = []
+            for sentPair in self.data[key]:
+                CL.data[key].append(sentPair[:])
+
+        CL.target_names = self.target_names[:]
+        CL.containing = self.containing[:]
+
+        return CL
+
     def _tokenize(self, sentList):
 
         tokenized = []

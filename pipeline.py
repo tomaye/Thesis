@@ -228,9 +228,8 @@ class Pipeline:
         :return:
         '''
         predicted = self.classifier.predict(self.X_test)
-        print(np.mean(predicted == self.y_test))
 
-        return np.array(predicted)
+        return np.mean(predicted == self.y_test)
 
     def classify(self):
         None

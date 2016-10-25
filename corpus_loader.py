@@ -18,7 +18,13 @@ class CorpusLoader:
 
 
     def add_Corpus(self, path, min, max):
-        #combines another corpus with the current
+        '''
+        comines self with another corpus
+        :param path: path to file
+        :param min: min length of sentence
+        :param max: max length of sentence
+        :return: self
+        '''
         temp = self.target_names
         self.load(path, min, max)
         newTargets = set(temp + self.target_names)
@@ -42,6 +48,11 @@ class CorpusLoader:
         return CL
 
     def _tokenize(self, sentList):
+        '''
+        helper function for tokenize. does all the dirty work
+        :param sentList: sentence pair [sent1, sent2]
+        :return: list of tokenized sentence pairs
+        '''
 
         tokenized = []
 
@@ -63,7 +74,10 @@ class CorpusLoader:
         return tokenized
 
     def tokenize(self):
-
+        '''
+        tokenize words and deletes stop words
+        :return:
+        '''
         for label in self.data.keys():
 
             self.data[label] = [self._tokenize(sentPair) for sentPair in self.data[label]]
@@ -72,9 +86,13 @@ class CorpusLoader:
 
 
     def load(self, path, min = None, max = None):
-        #loads corpus into self.data
-        #min = minLength of phrase
-        #max = MaxLength of phrase
+        '''
+        load labeled sentence in self.data as dictionary {label:sentence}
+        :param path: path to file
+        :param min: min length of sentence
+        :param max: max length of sentence
+        :return: self
+        '''
 
         file = open(os.getcwd()+"/" + path)
 
@@ -95,7 +113,10 @@ class CorpusLoader:
 
 
     def stats(self):
-        #returns the distribution of data
+        '''
+        print the number of instances per label
+        :return:
+        '''
         stats = {}
         stats["total"] = 0
         for key in self.data.keys():
@@ -109,8 +130,12 @@ class CorpusLoader:
 
 
     def grab(self, label, n, shuffled=True):
-        #grabs n elements with this label
-        #returns list of sentence pairs with length n
+        '''
+        grab n elements with label
+        :param label: target label
+        :param n: number of phrases which should be grabbed
+        :return: list of n sentence pairs
+        '''
 
         sentences = self.data[label]
         if n > len(sentences):
@@ -123,11 +148,14 @@ class CorpusLoader:
         return grabbed
 
     def partition(self, labels, partitionList, shuffled=True):
-        #same as grab() but with balanced labels
-        #partitionList: list of percentages
-        #returns a list of partitions
+        '''
+        partition the labels of a corpus into the balanced partitions
+        :param labels: list of labels which should be partitioned
+        :param partitionList: list of percentages
+        :param shuffled: if the data should be shuffled
+        :return: list of partitions [ [part1], [part2]...]
+        '''
 
-        #partitioned = [ defaultdict(list) for x in partitionList]
         partitioned = [CorpusLoader() for x in partitionList]
 
         if sum(partitionList) != 100:
@@ -152,32 +180,41 @@ class CorpusLoader:
             return partitioned
 
     def get_smallest(self, listOfLabels):
-        #returns the smallest label (number,label)
+        '''
+        get the label with the smallest amount of phrases
+        :param listOfLabels: list of labels which should be considered
+        :return: name of the smallest label
+        '''
         smallest = len(self.data[listOfLabels[0]]), listOfLabels[0]
         for label in listOfLabels:
             if len(self.data[label]) < smallest[0]:
                 smallest = len(self.data[label]),label
-        #print(smallest)
         return smallest
 
 
 
     def balance(self, labels = None):
-        #balance the corpus with respect to the smallest class
-        #returns dict with label:[[sent1,sent2],...]
+        '''
+        balance the labels/corpus
+        :param labels: list of labels which should be balanced
+        :return: dict{label:[ [sent1, sent2] ,..., [sent3, sent4] ]}
+        '''
+
         if labels is None:
             labels = self.target_names
         corpus = defaultdict(list)
-        #numOfClasses = len(labels)
-        #percentage = math.trunc(100/numOfClasses)
-        #print(percentage)
         min, smallest = self.get_smallest(labels)
         for label in labels:
             corpus[label] = self.grab(label, min)
         return corpus
 
     def mergeLabel(self, labels, newLabel):
-        #merges labels into a new one
+        '''
+        maps all data of labels to newLabel
+        :param labels: list of labels which should be merged
+        :param newLabel: new label of the merged data
+        :return: self
+        '''
         merged = []
         for label in labels:
             if label in self.data.keys():
@@ -188,17 +225,17 @@ class CorpusLoader:
             self.target_names.append(newLabel)
 
     def mergeData(self):
-        #merges utterances into String [sent1,sent2] -> sent1 + sent2
-        #print(self.data["negative"][1])
-        #print(type(self.data["negative"][1]))
+        '''
+        merge the two phrases into one if the data consists of two phrases per label [sent1, sent2] -> [sent1+2]
+        :return: self
+        '''
+
         for label in self.data:
             i = 0
             for elem in self.data[label]:
                 newStr = elem[0] + " " + elem[1]
                 self.data[label][i] = newStr
                 i += 1
-        #print(self.data["negative"][1])
-        #print(type(self.data["negative"][1]))
 
     def mergeWithCorpus(self, corpora):
         '''
@@ -224,9 +261,6 @@ class CorpusLoader:
         :param labels: labels which should be used
         :return: samples: list of instances; y: target list; mapping: mapping between y and labels
         '''
-        #samples: list of strings
-        #y: target
-        #mapping: mapping labels to int
 
         if corpus == None:
             corpus = self.data

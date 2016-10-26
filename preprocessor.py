@@ -62,12 +62,15 @@ def main():
     text = "Praveen Attri claims genetic reasons to be largely responsible for social deviance	Praveen Attri claims genetic reasons to be largely responsible for social deviance"
     text = "a 1984 Supreme Court decision in City Council of Los Angeles v. Taxpayers for Vincent, where the majority stated that, the First Amendment does not guarantee the right to employ every"
     text = "Los Gatos has already banned it and SO has the county.	I don't think that our businesses are in as a competitive disadvantage as they may think."
-    text = "AND LET ME ANNOUNCE MYSELF IN TELLING TO YOU HOW IS THIS SO BAD AND HOW THIS CAN LEAD TO DEFLOODKY'S ARGUMENT"
+    text = "haven't AND LET ME ANNOUNCE MYSELF IN TELLING TO YOU HOW IS THIS SO BAD AND HOW THIS CAN LEAD TO DEFLOODKY'S ARGUMENT"
 
 
     text = text.lower()
     words= tokenize(text)
-    #print(words)
-    print(filter_stopwords(words))
+    print(words)
+    word = "'s"
+    stopwordList = set("'s")
+    if word not in stopwordList:
+        print(word)
 
 main()

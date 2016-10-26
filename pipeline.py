@@ -6,6 +6,7 @@ from sklearn.feature_selection import SelectKBest, chi2
 import taxonomie
 import scipy.sparse as sp
 import numpy as np
+from nltk.corpus import stopwords
 
 
 class Pipeline:
@@ -117,9 +118,30 @@ class Pipeline:
         :return: unified data
         '''
 
-        unified = [pre + " " + suc for [pre,suc] in samples]
+        unified = [pre + " " + suc for [pre, suc] in samples]
 
         return unified
+
+    def _filter(self, samples):
+        '''
+        filter stopwords from samples
+        :param samples: list of instances
+        :return: filtered data
+        '''
+
+
+        stopwordList = set(stopwords.words("english"))
+        stopwordList.add("'s")
+        filtered = []
+
+        for sentpair in samples:
+            temp = []
+            for sent in sentpair:
+                sent = " ".join([w for w in sent.split() if w not in stopwordList])
+                temp.append(sent)
+            filtered.append(temp)
+
+        return filtered
 
     def _get_model(self, feature):
         '''
@@ -201,6 +223,13 @@ class Pipeline:
         builds self.X_train, self.X_test matrices and fits classifier on the trainings data
         :return: None
         '''
+
+        print(self.test)
+        self.train_raw = self.train
+        self.train = self._filter(self.train)
+        self.test_raw = self.test
+        self.test = self._filter(self.test)
+        print(self.test)
 
         self.train_unified = self._unify_data(self.train)
         self.test_unified = self._unify_data(self.test)

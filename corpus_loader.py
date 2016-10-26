@@ -63,9 +63,11 @@ class CorpusLoader:
 
             words = word_tokenize(sent, "english")
 
-            stopwordList = set(stopwords.words("english"))
-            stopwordList.add("'s")
-            filtered = [w for w in words if w not in stopwordList]
+            #stopwordList = set(stopwords.words("english"))
+            #stopwordList.add("'s")
+            stopwordList = set("'s")
+
+            filtered = [w.replace("n't", "not") for w in words if w not in stopwordList]
 
             joined = ' '.join(str(elem) for elem in filtered)
 
@@ -75,7 +77,7 @@ class CorpusLoader:
 
     def tokenize(self):
         '''
-        tokenize words and deletes stop words
+        tokenize words
         :return:
         '''
         for label in self.data.keys():

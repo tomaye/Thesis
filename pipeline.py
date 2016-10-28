@@ -1,6 +1,8 @@
 from corpus_loader import CorpusLoader
 from features import modality, token_counter, skipgrams, wordpairs, doc2vec, chunk_counter
-from sklearn import svm, cross_validation
+from sklearn import svm
+from sklearn.model_selection import cross_val_score
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
 import taxonomie
@@ -189,8 +191,8 @@ class Pipeline:
 
             vec = modality.ModelVectozier()
 
-            train_matrix = vec.check_modality(self.train_unified)
-            test_matrix = vec.check_modality(self.test_unified)
+            train_matrix = vec.check_modality(self.train_raw)
+            test_matrix = vec.check_modality(self.test_raw)
 
             return None, train_matrix, test_matrix
 
@@ -274,7 +276,7 @@ class Pipeline:
 
     def cross_validation(self):
 
-        scores = cross_validation.cross_val_score(self.classifier, self.X_train, self.y_train, cv=5)
+        scores = cross_val_score(self.classifier, self.X_train, self.y_train, cv=5)
         print("\n")
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
         print("The following features have been used: " + str(self.feature_list))

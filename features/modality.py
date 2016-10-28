@@ -19,17 +19,18 @@ class ModelVectozier():
 
         mods = []
 
-        for elem in text:
+        for sentpair in text:
 
             dic = {}
 
-            for modal in modals:
-                if modal in elem.split():
-                    dic = {"#modal": 1}
-                    continue
+            for sent in sentpair:
+                for modal in modals:
+                    if modal in sent.split():
+                        dic = {"#modal": 1}
+                        continue
                     #dic = {modal: 1}
-                else:
-                    dic = {"#modal": 1}
+                    else:
+                        dic = {"#modal": 1}
                     #dic = {modal: 0}
             mods.append(dic)
 

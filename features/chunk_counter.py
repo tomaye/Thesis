@@ -9,7 +9,7 @@ setpath = " -path /home/frigori/Senna/senna/"
 tag = " -chk"
 cmd = setpath + tag + " < " + input + " > " + output
 
-test = ["I want some food and like playing golf","JUST TESTING SOMETHING HERE"]
+test = [["I want some food and like playing golf","JUST TESTING SOMETHING HERE"],["this is sentence two", "my party stands firmly convinced"]]
 
 
 
@@ -19,28 +19,36 @@ class ChunkcountVectorizer():
 
         X = []
 
-        for sent in text:
-            f = open(input, "w+", encoding="utf-8")
-            f.write(sent)
-            f.close()
-            subprocess.run([senna+cmd], shell=True)
-            f = open(output,"r", encoding="utf-8")
+        total = 0
 
-            counter = 0
-            for line in f:
-                line = line.split("\t")
-                print(line)
-                if line != ["\n"]:
-                    if "B" in line[1]:
-                        counter += 1
-            f.close()
-            X.append(counter)
+        for sentpair in text:
+            temp =[]
+            for sent in sentpair:
+                f = open(input, "w+", encoding="utf-8")
+                f.write(sent)
+                f.close()
+                subprocess.run([senna+cmd], shell=True)
+                f = open(output,"r", encoding="utf-8")
 
+                counter = 0
+                for line in f:
+                    line = line.split("\t")
+                    #print(line)
+                    if line != ["\n"]:
+                        if "B" in line[1]:
+                            counter += 1
+                f.close()
+                temp.append(counter)
+            X.append(temp)
+            total += 1
+            print(str(total) + "/" + str(len(text)))
         subprocess.run("rm "+input, shell=True)
         subprocess.run("rm "+output, shell=True)
 
+        #print(np.array(X))
         return np.array(X)
 #TODO
-sentPairwise array
+#sentPairwise array
 
-
+#vec = ChunkcountVectorizer()
+#vec.count_chunks(test)

@@ -1,5 +1,5 @@
 from corpus_loader import CorpusLoader
-from features import modality, token_counter, skipgrams, wordpairs, doc2vec
+from features import modality, token_counter, skipgrams, wordpairs, doc2vec, chunk_counter
 from sklearn import svm, cross_validation
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
@@ -39,6 +39,7 @@ class Pipeline:
         :param corpus: key of a corpus in self.corpora
         :return: None
         '''
+        print(corpus + " added to Test")
         self.test.append(corpus)
 
     def assignAsTrain(self, corpus):
@@ -47,6 +48,7 @@ class Pipeline:
         :param corpus: key of a corpus in self.corpora
         :return: None
         '''
+        print(corpus +" added to Train")
         self.train.append(corpus)
 
     def load_corpus(self, name, files, min=15, max= 100, merge=False):
@@ -217,6 +219,15 @@ class Pipeline:
 
             return model, train_matrix, test_matrix
 
+        if feature == "#chunks":
+
+            vec = chunk_counter.ChunkcountVectorizer()
+
+            train_matrix = vec.count_chunks(self.train_raw)
+            test_matrix = vec.count_chunks(self.test_raw)
+
+            return None, train_matrix, test_matrix
+
     def train_model(self):
         '''
         calls the computation of each feature in self.feature_list
@@ -224,12 +235,10 @@ class Pipeline:
         :return: None
         '''
 
-        print(self.test)
         self.train_raw = self.train
         self.train = self._filter(self.train)
         self.test_raw = self.test
         self.test = self._filter(self.test)
-        print(self.test)
 
         self.train_unified = self._unify_data(self.train)
         self.test_unified = self._unify_data(self.test)

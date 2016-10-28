@@ -44,13 +44,15 @@ with open('config.csv', newline="") as csvfile:
         #Loading and assigning test data
         for corpus in test:
 
+            #corpus already loaded in train
             if test == train:
                 cv = True
-                pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
+                #pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                 pip.assignAsTest(corpus)
                 break
 
-            if corpus in list(pip.corpora.keys()):
+            #split loaded train into train and test
+            elif corpus in list(pip.corpora.keys()):
                 cv = False
                 if len(partitioning) == 2:
                     [train_part, test_part] = pip.corpora[corpus].partition(taxonomyMapping[level], partitioning)
@@ -61,7 +63,7 @@ with open('config.csv', newline="") as csvfile:
                     pip.assignAsTrain(corpus + "_train")
                     pip.assignAsTest(corpus + "_test")
 
-
+                #split into 5 partitions for cv
                 if len(partitioning) == 5:
                     parts = pip.corpora[corpus].partition(taxonomyMapping[level], partitioning)
                     #part_list = parts
@@ -76,12 +78,16 @@ with open('config.csv', newline="") as csvfile:
 
                 continue
 
+            #if test corpus not in train
             else:
                 pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                 pip.assignAsTest(corpus)
 
         scores = []
 
+        #corpora
+        print(train)
+        print(test)
         for i in range(1, len(partitioning)+1):
             #merge corpora to one CL object each
             pip.train = pip.mergeCorpora(pip.train)
@@ -130,7 +136,7 @@ with open('config.csv', newline="") as csvfile:
                 for corpus in test:
                     if corpus in train:
                         part_list = [cl.clone() for cl in parts]
-                        indices = [[0, 1, 2, 3, 4], [1, 2, 3, 4, 0], [2, 3, 4, 0, 1], [3, 4, 0, 1, 2],[4, 0, 1, 2, 3]]
+                        indices = [[0, 1, 2, 3, 4], [1, 2, 3, 4, 0], [2, 3, 4, 0, 1], [3, 4, 0, 1, 2], [4, 0, 1, 2, 3]]
                         train_part = part_list[indices[i-1][1]].mergeWithCorpus([part_list[indices[i-1][2]],part_list[indices[i-1][3]],part_list[indices[i-1][4]]])
                         test_part = part_list[indices[i-1][0]]
                         pip.corpora[corpus + "_train"] = train_part
@@ -141,7 +147,7 @@ with open('config.csv', newline="") as csvfile:
                         pip.load_corpus(corpus, corpusMapping[corpus], sentenceLength[0], sentenceLength[1])
                         pip.assignAsTest(corpus)
 
-        if len(partitioning) == 5:
+        if not cv:
             scores = np.array(scores)
             print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
             print("The following features have been used: " + str(features))

@@ -1,5 +1,6 @@
 import subprocess
 import numpy as np
+import progressbar, time
 
 input = "./senna_input.txt"
 output = "./senna_output.txt"
@@ -16,14 +17,14 @@ test = [["I want some food and like playing golf","JUST TESTING SOMETHING HERE"]
 class ChunkcountVectorizer():
 
     def count_chunks(self, text):
-
+        bar = progressbar.ProgressBar(max_value=len(text))
         X = []
 
         total = 0
 
-        for sentpair in text:
+        for i in range(0,len(text)):
             temp =[]
-            for sent in sentpair:
+            for sent in text[i]:
                 f = open(input, "w+", encoding="utf-8")
                 f.write(sent)
                 f.close()
@@ -41,7 +42,8 @@ class ChunkcountVectorizer():
                 temp.append(counter)
             X.append(temp)
             total += 1
-            print(str(total) + "/" + str(len(text)))
+            bar.update(i)
+            #print(str(total) + "/" + str(len(text)))
         subprocess.run("rm "+input, shell=True)
         subprocess.run("rm "+output, shell=True)
 

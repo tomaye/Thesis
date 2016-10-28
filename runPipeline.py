@@ -86,8 +86,8 @@ with open('config.csv', newline="") as csvfile:
         scores = []
 
         #corpora
-        print(train)
-        print(test)
+        #print(train)
+        #print(test)
         for i in range(1, len(partitioning)+1):
             #merge corpora to one CL object each
             pip.train = pip.mergeCorpora(pip.train)

@@ -7,9 +7,11 @@ output = "./senna_output.txt"
 senna = "/home/frigori/Senna/senna/senna-linux64"
 setpath = " -path /home/frigori/Senna/senna/"
 tag = " -chk"
+#Semantic Role Label tagging
+tag = " -srl"
 cmd = setpath + tag + " < " + input + " > " + output
 
-test = [["I want some food and like playing golf","JUST TESTING SOMETHING HERE"],["this is sentence two", "my party stands firmly convinced"]]
+test = [["I want some food and like playing golf", "JUST TESTING SOMETHING HERE"], ["this is sentence two", "my party stands firmly convinced"]]
 
 
 
@@ -33,7 +35,7 @@ class ChunkcountVectorizer():
                 counter = 0
                 for line in f:
                     line = line.split("\t")
-                    #print(line)
+                    print(line)
                     if line != ["\n"]:
                         if "B" in line[1]:
                             counter += 1
@@ -47,8 +49,6 @@ class ChunkcountVectorizer():
 
         #print(np.array(X))
         return np.array(X)
-#TODO
-#sentPairwise array
 
-#vec = ChunkcountVectorizer()
-#vec.count_chunks(test)
+vec = ChunkcountVectorizer()
+vec.count_chunks(test)

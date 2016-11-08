@@ -230,6 +230,16 @@ class Pipeline:
 
             return None, train_matrix, test_matrix
 
+        if feature == "#args":
+
+            vec = chunk_counter.ChunkcountVectorizer()
+
+            train_matrix = vec.count_args(self.train_raw)
+            test_matrix = vec.count_args(self.test_raw)
+
+            return None, train_matrix, test_matrix
+
+
     def train_model(self):
         '''
         calls the computation of each feature in self.feature_list

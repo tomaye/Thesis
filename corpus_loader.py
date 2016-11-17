@@ -149,9 +149,9 @@ class CorpusLoader:
         grabbed = sentences[:n]
         return grabbed
 
-    def partition(self, labels, partitionList, shuffled=True):
+    def partition(self, labels, partitionList, shuffled=False):
         '''
-        partition the labels of a corpus into the balanced partitions
+        partition the labels of a corpus into balanced partitions
         :param labels: list of labels which should be partitioned
         :param partitionList: list of percentages
         :param shuffled: if the data should be shuffled
@@ -260,7 +260,7 @@ class CorpusLoader:
     def toLists(self, labels, corpus = None):
         '''
         converts CL object into samples, y and a mapping
-        :param labels: labels which should be used
+        :param labels: list of labels which should be used
         :return: samples: list of instances; y: target list; mapping: mapping between y and labels
         '''
 
@@ -271,12 +271,35 @@ class CorpusLoader:
         y = []
         i = 0
         mapping = []
+
+        #restricting the biggest class to same size as the second biggest class
+        biggest = (0, "")
+        secondBiggest = (0, "")
         for label in labels:
+
+            if len(corpus[label]) > biggest[0]:
+                secondBiggest = biggest
+                biggest = (len(corpus[label]), label)
+            elif len(corpus[label]) > secondBiggest[0]:
+                secondBiggest = (len(corpus[label]), label)
+        #print(self.stats())
+        #print(biggest)
+        #print(secondBiggest)
+
+        #convert to list format
+        for label in labels:
+
+            if label == biggest[1]:
+                max = secondBiggest[0]
+                newCorp = corpus[label][:max]
+                #print(len(newCorp))
+            else:
+                newCorp = corpus[label]
+
             mapping.append(label)
-            for elem in corpus[label]:
+            for elem in newCorp:
                 samples.append(elem)
                 y.append(i)
             i += 1
-
         return samples, np.array(y), mapping
 

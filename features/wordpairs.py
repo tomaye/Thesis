@@ -72,7 +72,7 @@ class WordpairVectorizer(DictVectorizer):
                     dict[(w1, w2)] = 1
 
             wps.append(dict)
-
+        print(len(dict.keys()))
         return wps
 
     def fit(self, X, y=None):

@@ -1,8 +1,1 @@
-meta;meta;#tokens,wordpairs,modals,ngrams,doc2vec,#chunks;coarse;False
-meta;meta;wordpairs,modals,ngrams,doc2vec,#chunks;coarse;False
-meta;meta;#tokens,modals,ngrams,doc2vec,#chunks;coarse;False
-meta;meta;#tokens,wordpairs,ngrams,doc2vec,#chunks;coarse;False
-meta;meta;#tokens,wordpairs,modals,doc2vec,#chunks;coarse;False
-meta;meta;#tokens,wordpairs,modals,ngrams,#chunks;coarse;False
-meta,forum;meta,forum;#tokens,wordpairs,modals,ngrams,doc2vec;coarse;False
-meta,forum,ibm;meta,forum,ibm;#tokens,wordpairs,modals,ngrams,doc2vec,#chunks;coarse;False
+ibm;ibm;wordpairs;fine;False

@@ -106,7 +106,7 @@ with open('config.csv', newline="") as csvfile:
             pip.max_features = {
                                 "ngrams": 100,
                                 "skipgrams": 500,
-                                "wordpairs": 500
+                                "wordpairs": 100
                                  }
 
             #set features

@@ -2,7 +2,7 @@ from corpus_loader import CorpusLoader
 from features import modality, token_counter, skipgrams, wordpairs, doc2vec, chunk_counter
 from sklearn import svm
 from sklearn.model_selection import cross_val_score
-
+from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
 import taxonomie
@@ -286,7 +286,8 @@ class Pipeline:
 
     def cross_validation(self):
 
-        scores = cross_val_score(self.classifier, self.X_train, self.y_train, cv=5)
+        cv = StratifiedKFold(5)
+        scores = cross_val_score(self.classifier, self.X_train, self.y_train, cv=cv)
         print("\n")
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
         print("The following features have been used: " + str(self.feature_list))

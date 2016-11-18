@@ -5,9 +5,11 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.model_selection import permutation_test_score
 import taxonomie
 import scipy.sparse as sp
 import numpy as np
+import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
 
 
@@ -29,7 +31,8 @@ class Pipeline:
         self.y_train = -1
         self.y_test = -1
         self.max_features = {
-                            "ngrams": 500,
+                            "unigrams": 500,
+                            "bigrams": 500,
                             "skipgrams": 500,
                             "wordpairs": 100
                              }
@@ -179,7 +182,7 @@ class Pipeline:
             vec = wordpairs.WordpairVectorizer()
             matrix = vec.fit_transform(self.train)
 
-            support = SelectKBest(chi2, self.max_features[feature]).fit(matrix, self.y_train)
+            support = SelectKBest(chi2, k = self.max_features[feature]).fit(matrix, self.y_train)
             vec.restrict(support.get_support())
 
             train_matrix = vec.transform(self.train)
@@ -196,10 +199,18 @@ class Pipeline:
 
             return None, train_matrix, test_matrix
 
-        if feature == "ngrams":
+        if feature == "bigrams":
 
-            vec = TfidfVectorizer(ngram_range=(1, 2), max_features=self.max_features[feature])
+            vec = TfidfVectorizer(ngram_range=(2, 2), max_features=self.max_features[feature])
 
+            train_matrix = vec.fit_transform(self.train_unified)
+            test_matrix = vec.transform(self.test_unified)
+
+            return vec, train_matrix, test_matrix
+
+        if feature == "unigrams":
+
+            vec = TfidfVectorizer(ngram_range=(1, 1), max_features=self.max_features[feature])
             train_matrix = vec.fit_transform(self.train_unified)
             test_matrix = vec.transform(self.test_unified)
 
@@ -227,6 +238,14 @@ class Pipeline:
 
             train_matrix = vec.count_chunks(self.train_raw)
             test_matrix = vec.count_chunks(self.test_raw)
+
+            return None, train_matrix, test_matrix
+
+        if feature == "#args":
+            vec = chunk_counter.ChunkcountVectorizer()
+
+            train_matrix = vec.count_args(self.train_raw)
+            test_matrix = vec.count_args(self.test_raw)
 
             return None, train_matrix, test_matrix
 
@@ -272,16 +291,35 @@ class Pipeline:
 
         return np.mean(predicted == self.y_test)
 
-    def classify(self):
-        None
+    def test_significance(self,plot =True):
+        cv = StratifiedKFold(2)
+
+        score, permutation_scores, pvalue = permutation_test_score(
+            self.classifier, self.X_train, self.y_train, scoring="accuracy", cv=cv, n_permutations=100, n_jobs=1)
+
+        print("Classification score %s (pvalue : %s)" % (score, pvalue))
+
+        if plot:
+            n_classes = np.unique(self.y_train).size
+            plt.hist(permutation_scores, 20, label='Permutation scores')
+            ylim = plt.ylim()
+            plt.plot(2 * [score], ylim, '--g', linewidth=3,
+                     label='Classification Score'
+                           ' (pvalue %s)' % pvalue)
+            plt.plot(2 * [1. / n_classes], ylim, '--k', linewidth=3, label='Luck')
+            plt.ylim(ylim)
+            plt.legend()
+            plt.xlabel('Score')
+            plt.show()
 
     def cross_validation(self):
 
         cv = StratifiedKFold(n_splits=5)
         scores = cross_val_score(self.classifier, self.X_train, self.y_train, cv=cv)
-        print("\n")
+
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
         print("The following features have been used: " + str(self.feature_list))
+        print("\n")
 
     def set_classifier(self, classifier):
         self.classifier = classifier

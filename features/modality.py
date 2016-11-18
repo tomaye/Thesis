@@ -30,7 +30,7 @@ class ModelVectozier():
                         continue
                     #dic = {modal: 1}
                     else:
-                        dic = {"#modal": 1}
+                        dic = {"#modal": 0}
                     #dic = {modal: 0}
             mods.append(dic)
 

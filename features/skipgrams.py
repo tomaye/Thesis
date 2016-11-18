@@ -141,3 +141,7 @@ class SkipgramVectorizer(DictVectorizer):
 
         return self
 
+    def get_feature_names(self):
+
+        return self.vectorizer.get_feature_names()
+

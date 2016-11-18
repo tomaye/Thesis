@@ -13,6 +13,7 @@ def get_word_pairs(data,y, max = 100, n = 2):
     :return:
     '''
 
+    print("USING old WordPairs")
     X = []
 
     for sent in data:
@@ -69,10 +70,10 @@ class WordpairVectorizer(DictVectorizer):
 
                 for w2 in sentPair[1].split():
 
-                    dict[(w1, w2)] = 1
+                    dict[(w1, w2)] += 1
 
             wps.append(dict)
-        print(len(dict.keys()))
+        #print(len(dict.keys()))
         return wps
 
     def fit(self, X, y=None):
@@ -108,6 +109,9 @@ class WordpairVectorizer(DictVectorizer):
 
         return self
 
+    def get_feature_names(self):
+
+        return self.vectorizer.get_feature_names()
 
 def main():
     text = [["killed by death", "in the house"], ["one", "two"]]

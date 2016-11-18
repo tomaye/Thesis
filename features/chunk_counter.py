@@ -21,14 +21,14 @@ class ChunkcountVectorizer():
     def count_chunks(self, text):
         tag = " -chk"
         cmd = setpath + tag + " < " + input + " > " + output
-
+        bar = progressbar.ProgressBar(max_value=len(text))
         X = []
 
         total = 0
 
-        for sentpair in text:
+        for i in range(0, len(text)):
             temp =[]
-            for sent in sentpair:
+            for sent in text[i]:
                 f = open(input, "w+", encoding="utf-8")
                 f.write(sent)
                 f.close()
@@ -38,19 +38,18 @@ class ChunkcountVectorizer():
                 counter = 0
                 for line in f:
                     line = line.split("\t")
-                    print(line)
+                    #print(line)
                     if line != ["\n"]:
                         if "B" in line[1]:
                             counter += 1
                 f.close()
                 temp.append(counter)
             X.append(temp)
-            total += 1
-            print(str(total) + "/" + str(len(text)))
+            bar.update(i)
+
         subprocess.run("rm "+input, shell=True)
         subprocess.run("rm "+output, shell=True)
 
-        #print(np.array(X))
         return np.array(X)
 
     def count_args(self, text):

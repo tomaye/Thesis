@@ -1,17 +1,16 @@
 from corpus_loader import CorpusLoader
 from features import modality, token_counter, skipgrams, wordpairs, doc2vec, chunk_counter
 from sklearn import svm
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.model_selection import permutation_test_score
+from sklearn.metrics import average_precision_score, confusion_matrix
 import taxonomie
 import scipy.sparse as sp
 import numpy as np
 import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
-
 
 class Pipeline:
 
@@ -180,10 +179,11 @@ class Pipeline:
         if feature == "wordpairs":
 
             vec = wordpairs.WordpairVectorizer()
-            matrix = vec.fit_transform(self.train)
+            matrix = vec.fit_transform(self.train, self.y_train)
 
             support = SelectKBest(chi2, k = self.max_features[feature]).fit(matrix, self.y_train)
             vec.restrict(support.get_support())
+            print(len(vec.vocabulary_))
 
             train_matrix = vec.transform(self.train)
             test_matrix = vec.transform(self.test)
@@ -320,6 +320,22 @@ class Pipeline:
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
         print("The following features have been used: " + str(self.feature_list))
         print("\n")
+
+    def average_precision(self):
+        '''
+        computes the average precision for binary classification
+        :return: average precision score
+        '''
+        self.classifier.fit(self.X_train, self.y_train)
+        y_scores = self.classifier.predict(self.X_test)
+        print("Average precision: " + str(average_precision_score(self.y_test, y_scores)))
+
+    def confusion_matrix(self, mapping):
+
+        self.classifier.fit(self.X_train, self.y_train)
+        y_pred = self.classifier.predict(self.X_test)
+        print(mapping)
+        print(confusion_matrix(self.y_test, y_pred))
 
     def set_classifier(self, classifier):
         self.classifier = classifier

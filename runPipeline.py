@@ -84,8 +84,10 @@ with open('config.csv', newline="") as csvfile:
         pip.train_model()
 
         if cv:
-            pip.test_significance()
+            #pip.test_significance()
             pip.cross_validation()
+            #pip.average_precision()
+            pip.confusion_matrix(mapping_train)
 
         else:
             predicted = pip.predict()

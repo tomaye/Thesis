@@ -1,7 +1,7 @@
 import os
 from collections import defaultdict
 from random import shuffle
-import math
+import math, random
 import numpy as np
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -168,7 +168,13 @@ class CorpusLoader:
             for label in labels:
 
                 total = len(self.data[label])
-                temp = self.data[label][:]
+
+                if shuffled:
+                    temp = self.data[label][:]
+                    random.shuffle(temp)
+                else:
+                    temp = self.data[label][:]
+
                 partitions = [math.floor(part*(total/100)) for part in partitionList]
                 start = 0
                 i = 0

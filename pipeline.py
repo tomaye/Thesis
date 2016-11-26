@@ -289,7 +289,8 @@ class Pipeline:
         '''
         predicted = self.classifier.predict(self.X_test)
 
-        return np.mean(predicted == self.y_test)
+        return predicted
+        #return np.mean(predicted == self.y_test)
 
     def test_significance(self,plot =True):
         cv = StratifiedKFold(2)
@@ -314,7 +315,7 @@ class Pipeline:
 
     def cross_validation(self):
 
-        cv = StratifiedKFold(n_splits=5)
+        cv = StratifiedKFold(n_splits=10)
         scores = cross_val_score(self.classifier, self.X_train, self.y_train, cv=cv)
 
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
@@ -332,7 +333,6 @@ class Pipeline:
 
     def confusion_matrix(self, mapping):
 
-        self.classifier.fit(self.X_train, self.y_train)
         y_pred = self.classifier.predict(self.X_test)
         print(mapping)
         print(confusion_matrix(self.y_test, y_pred))

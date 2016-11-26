@@ -87,3 +87,39 @@ class ChunkcountVectorizer():
         subprocess.run("rm "+output, shell=True)
 
         return np.array(X)
+
+    def count_psg(self, text):
+        tag = " -psg"
+        cmd = setpath + tag + " < " + input + " > " + output
+        bar = progressbar.ProgressBar(max_value=len(text))
+        X = []
+
+        for i in range(0,len(text)):
+            sent = text[i]
+            temp =[]
+            f = open(input, "w+", encoding="utf-8")
+            f.write(sent)
+            f.close()
+            subprocess.run([senna+cmd], shell=True)
+            f = open(output, "r", encoding="utf-8")
+
+            counterArgs = 0
+            counterMods = 0
+            for line in f:
+                line = line.split("\t")
+                print(line)
+                if line != ["\n"]:
+                    if "AM-MOD" in line[-1] or "AM-MNR" in line[-1]:
+                        counterArgs += 1
+                    elif "A0" in line[-1] or "A1" in line[-1] or "A2" in line[-1]:
+                        counterMods += 1
+            f.close()
+            temp.append(counterArgs)
+            temp.append(counterMods)
+        X.append(temp)
+        bar.update(i)
+
+        subprocess.run("rm "+input, shell=True)
+        subprocess.run("rm "+output, shell=True)
+
+        return np.array(X)

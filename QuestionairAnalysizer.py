@@ -28,4 +28,11 @@ for line in f:
 
 senna = chunk_counter.ChunkcountVectorizer()
 
-senna.count_psg(text)
+#syn = senna.count_constituents(text)
+#sem = senna.count_args([[sent,""] for sent in text])
+length = [len(sent.split()) for sent in text]
+
+#print(syn)
+#print([sum(row)for row in sem])
+print(length)
+

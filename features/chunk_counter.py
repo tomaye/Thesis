@@ -116,5 +116,4 @@ class ChunkcountVectorizer():
 
         subprocess.run("rm "+input, shell=True)
         subprocess.run("rm "+output, shell=True)
-        print(X)
         return np.array(X)

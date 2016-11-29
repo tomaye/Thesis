@@ -89,6 +89,11 @@ class ChunkcountVectorizer():
         return np.array(X)
 
     def count_constituents(self, text):
+        '''
+        counts syntactic constituents
+        :param text:
+        :return:
+        '''
         tag = " -psg"
         cmd = setpath + tag + " < " + input + " > " + output
         bar = progressbar.ProgressBar(max_value=len(text))
@@ -117,3 +122,32 @@ class ChunkcountVectorizer():
         subprocess.run("rm "+input, shell=True)
         subprocess.run("rm "+output, shell=True)
         return np.array(X)
+
+
+    def save_as_file(self, text, tag):
+
+        if tag == "srl":
+
+            X = self.count_args(text)
+            f = open ("srl.txt", "w+", encoding="utf-8")
+
+            for i in range(0,len(text)):
+                f.write(str(text[i])+"\t"+str(X[i])+"\n")
+
+    def load_from_file(self, text, tag):
+
+        if tag == "srl":
+
+            dic = {}
+            f = open("srl.txt", encoding="utf-8")
+            for line in f:
+                [key, value] =line.split("\t")
+                dic[key] = value
+
+            X = []
+            for sentences in text:
+                numbers = dic[str(sentences)].replace("\n","").replace("[", "").replace("]", "")
+                ints = [int(i) for i in numbers.split()]
+                X.append(ints)
+
+            return np.array(X)

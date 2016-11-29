@@ -199,8 +199,6 @@ class CorpusLoader:
                 smallest = len(self.data[label]),label
         return smallest
 
-
-
     def balance(self, labels = None):
         '''
         balance the labels/corpus
@@ -262,7 +260,6 @@ class CorpusLoader:
 
         return self
 
-
     def toLists(self, labels, corpus = None):
         '''
         converts CL object into samples, y and a mapping
@@ -288,9 +285,6 @@ class CorpusLoader:
                 biggest = (len(corpus[label]), label)
             elif len(corpus[label]) > secondBiggest[0]:
                 secondBiggest = (len(corpus[label]), label)
-        #print(self.stats())
-        #print(biggest)
-        #print(secondBiggest)
 
         #convert to list format
         for label in labels:
@@ -298,7 +292,6 @@ class CorpusLoader:
             if label == biggest[1]:
                 max = secondBiggest[0]
                 newCorp = corpus[label][:max]
-                #print(len(newCorp))
             else:
                 newCorp = corpus[label]
 
@@ -307,5 +300,16 @@ class CorpusLoader:
                 samples.append(elem)
                 y.append(i)
             i += 1
+
+        '''
+        #without balancing classes
+        for label in labels:
+            mapping.append(label)
+            for elem in corpus[label]:
+                samples.append(elem)
+                y.append(i)
+        i += 1
+        '''
+
         return samples, np.array(y), mapping
 

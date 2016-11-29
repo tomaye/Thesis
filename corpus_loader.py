@@ -275,7 +275,7 @@ class CorpusLoader:
         i = 0
         mapping = []
 
-        #'''
+        '''
         #restricting the biggest class to same size as the second biggest class
         biggest = (0, "")
         secondBiggest = (0, "")
@@ -310,7 +310,7 @@ class CorpusLoader:
                 samples.append(elem)
                 y.append(i)
         i += 1
-        '''
+        #'''
 
         return samples, np.array(y), mapping
 

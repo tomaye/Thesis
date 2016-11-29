@@ -237,11 +237,11 @@ class Pipeline:
             vec = chunk_counter.ChunkcountVectorizer()
 
             #save model
-            #vec.save_as_file(self.train_raw, "srl")
+            vec.save_as_file(self.train_raw, "chk")
 
             #load model
-            train_matrix = vec.load_from_file(self.train_raw, "srl")
-            test_matrix = vec.load_from_file(self.test_raw, "srl")
+            train_matrix = vec.load_from_file(self.train_raw, "chk")
+            test_matrix = vec.load_from_file(self.test_raw, "chk")
 
             #without saving/loading
             #train_matrix = vec.count_chunks(self.train_raw)
@@ -253,7 +253,7 @@ class Pipeline:
             vec = chunk_counter.ChunkcountVectorizer()
 
             #save model
-            #vec.save_as_file(self.train_raw, "srl")
+            vec.save_as_file(self.train_raw, "srl")
 
             #load model
             train_matrix = vec.load_from_file(self.train_raw, "srl")

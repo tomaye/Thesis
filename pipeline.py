@@ -236,8 +236,16 @@ class Pipeline:
 
             vec = chunk_counter.ChunkcountVectorizer()
 
-            train_matrix = vec.count_chunks(self.train_raw)
-            test_matrix = vec.count_chunks(self.test_raw)
+            #save model
+            #vec.save_as_file(self.train_raw, "srl")
+
+            #load model
+            train_matrix = vec.load_from_file(self.train_raw, "srl")
+            test_matrix = vec.load_from_file(self.test_raw, "srl")
+
+            #without saving/loading
+            #train_matrix = vec.count_chunks(self.train_raw)
+            #test_matrix = vec.count_chunks(self.test_raw)
 
             return None, train_matrix, test_matrix
 

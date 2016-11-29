@@ -60,6 +60,7 @@ class ChunkcountVectorizer():
 
         for i in range(0, len(text)):
             temp =[]
+
             for sent in text[i]:
                 f = open(input, "w+", encoding="utf-8")
                 f.write(sent)
@@ -69,6 +70,7 @@ class ChunkcountVectorizer():
 
                 counterArgs = 0
                 counterMods = 0
+
                 for line in f:
                     line = line.split("\t")
                     #print(line)
@@ -129,7 +131,15 @@ class ChunkcountVectorizer():
         if tag == "srl":
 
             X = self.count_args(text)
-            f = open ("srl.txt", "w+", encoding="utf-8")
+            f = open("srl.txt", "w+", encoding="utf-8")
+
+            for i in range(0,len(text)):
+                f.write(str(text[i])+"\t"+str(X[i])+"\n")
+
+        if tag == "chk":
+
+            X = self.count_chunks(text)
+            f = open("chk.txt", "w+", encoding="utf-8")
 
             for i in range(0,len(text)):
                 f.write(str(text[i])+"\t"+str(X[i])+"\n")
@@ -137,17 +147,23 @@ class ChunkcountVectorizer():
     def load_from_file(self, text, tag):
 
         if tag == "srl":
-
-            dic = {}
             f = open("srl.txt", encoding="utf-8")
-            for line in f:
-                [key, value] =line.split("\t")
-                dic[key] = value
 
-            X = []
-            for sentences in text:
-                numbers = dic[str(sentences)].replace("\n","").replace("[", "").replace("]", "")
-                ints = [int(i) for i in numbers.split()]
-                X.append(ints)
+        elif tag == "chk":
+            f = open("chk.txt", encoding="utf-8")
 
-            return np.array(X)
+        dic = {}
+
+        for line in f:
+            [key, value] =line.split("\t")
+            dic[key] = value
+
+        X = []
+        for sentences in text:
+            numbers = dic[str(sentences)].replace("\n","").replace("[", "").replace("]", "")
+            ints = [int(i) for i in numbers.split()]
+            #single = sum(ints)
+            #X.append([single])
+            X.append(ints)
+
+        return np.array(X)

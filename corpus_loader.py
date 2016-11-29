@@ -275,6 +275,7 @@ class CorpusLoader:
         i = 0
         mapping = []
 
+        #'''
         #restricting the biggest class to same size as the second biggest class
         biggest = (0, "")
         secondBiggest = (0, "")

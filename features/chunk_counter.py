@@ -76,9 +76,9 @@ class ChunkcountVectorizer():
                     #print(line)
                     if line != ["\n"]:
                         if "AM-MOD" in line[-1] or "AM-MNR" in line[-1]:
-                            counterArgs += 1
-                        elif "A0" in line[-1] or "A1" in line[-1] or "A2" in line[-1]:
                             counterMods += 1
+                        elif "A0" in line[-1] or "A1" in line[-1] or "A2" in line[-1]:
+                            counterArgs += 1
                 f.close()
                 temp.append(counterArgs)
                 temp.append(counterMods)

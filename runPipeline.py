@@ -19,7 +19,7 @@ taxonomyMapping = {
 sentenceLength = [15, 100]
 partitioning = [20, 20, 20, 20, 20]
 partitioning = [70, 30]
-cv = True
+cv = False
 testSignificance = False
 
 overallScores = []

@@ -1,5 +1,5 @@
 from corpus_loader import CorpusLoader
-from features import modality, token_counter, skipgrams, wordpairs, doc2vec, chunk_counter
+from features import modality, token_counter, skipgrams, wordpairs, doc2vec, chunk_counter, hierarchical_clf
 from sklearn import svm
 from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -18,6 +18,7 @@ class Pipeline:
     def __init__(self):
         self.corpora = {}
         self.tax = taxonomie.Taxonomie()
+        self.mapping = []
         self.train = []
         self.train_unified = []
         self.test = []
@@ -262,6 +263,16 @@ class Pipeline:
             #without saving/loading
             #train_matrix = vec.count_args(self.train_raw)
             #test_matrix = vec.count_args(self.test_raw)
+
+            return None, train_matrix, test_matrix
+
+        if feature  == "coarse_predictions":
+
+            vec = hierarchical_clf.PredictionVectorzier()
+            higher_y = vec.label_transformer(self.mapping, self.y_train)
+            vec.fit(self.X_train, higher_y)
+            train_matrix = vec.predict(self.X_train)
+            test_matrix = vec.predict(self.X_test)
 
             return None, train_matrix, test_matrix
 

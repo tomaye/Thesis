@@ -29,12 +29,16 @@ with open('config.csv', newline="") as csvfile:
     expreader = csv.reader(csvfile, delimiter=";")
 
     exp = next(expreader)
-    for i in range(0,10):
+    for i in range(0,2):
     #for exp in expreader:
-        [train, test, features, level, hiera] = exp
+        [train, test, features, level, hierarchical] = exp
         train = train.split(",")
         test = test.split(",")
         features = features.split(",")
+
+        if hierarchical == "true":
+            features.append("coarse_predictions")
+
 
 
         pip = pipeline.Pipeline()
@@ -89,7 +93,7 @@ with open('config.csv', newline="") as csvfile:
         pip.test = pip.mergeCorpora(pip.test)
 
         #to lists
-        pip.train, pip.y_train, mapping_train = pip.train.toLists(taxonomyMapping[level])
+        pip.train, pip.y_train, pip.mapping = pip.train.toLists(taxonomyMapping[level])
         pip.test, pip.y_test, mapping_test = pip.test.toLists(taxonomyMapping[level])
 
             #pip.train:
@@ -115,11 +119,11 @@ with open('config.csv', newline="") as csvfile:
 
         if cv:
             pip.cross_validation()
-            pip.confusion_matrix(mapping_train)
+            pip.confusion_matrix(pip.mapping)
 
         if AP:
             pip.average_precision()
-            pip.confusion_matrix(mapping_train)
+            pip.confusion_matrix(pip.mapping)
 
 
         if not cv:
@@ -129,7 +133,7 @@ with open('config.csv', newline="") as csvfile:
             print("Accuracy: " + str(scores.mean()))
             print("The following features have been used: " + str(features))
             overallScores.append(scores.mean())
-            pip.confusion_matrix(mapping_train)
+            pip.confusion_matrix(pip.mapping)
         print("\n")
 
     if len(overallScores) > 1:

@@ -1,1 +1,2 @@
-ibm;ibm;skipgrams;fine;true
+meta;meta;modals;coarse;false
+meta,forum;meta;bigrams;coarse;false

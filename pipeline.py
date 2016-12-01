@@ -11,6 +11,7 @@ import scipy.sparse as sp
 import numpy as np
 import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
+import os.path
 
 class Pipeline:
 
@@ -319,8 +320,8 @@ class Pipeline:
         return predicted
         #return np.mean(predicted == self.y_test)
 
-    def test_significance(self,plot =True):
-        cv = StratifiedKFold(2)
+    def test_significance(self, plot=True):
+        cv = StratifiedKFold(5)
 
         score, permutation_scores, pvalue = permutation_test_score(
             self.classifier, self.X_train, self.y_train, scoring="accuracy", cv=cv, n_permutations=100, n_jobs=1)
@@ -340,6 +341,8 @@ class Pipeline:
             plt.xlabel('Score')
             plt.show()
 
+        return score, pvalue
+
     def cross_validation(self):
 
         cv = StratifiedKFold(n_splits=10)
@@ -356,14 +359,45 @@ class Pipeline:
         '''
         self.classifier.fit(self.X_train, self.y_train)
         y_scores = self.classifier.predict(self.X_test)
-        print("Average precision: " + str(average_precision_score(self.y_test, y_scores)))
+        AP = average_precision_score(self.y_test, y_scores)
+        print("Average precision: " + str(AP))
+        return AP
 
     def confusion_matrix(self, mapping):
 
         y_pred = self.classifier.predict(self.X_test)
         print(mapping)
-        print(confusion_matrix(self.y_test, y_pred))
+        matrix = confusion_matrix(self.y_test, y_pred)
+        print(matrix)
+
+        return matrix
 
     def set_classifier(self, classifier):
         self.classifier = classifier
+
+    def save_as_file(self, values):
+        '''
+        write classification results to file
+        :param values: dictionary of values {accuracy, p, CV, matrix, AP, corpora, features}
+        :return: None
+        '''
+
+        fname = "results.txt"
+
+        if os.path.isfile(fname):
+
+            f = open(fname, "a", encoding="utf-8")
+        else:
+            f = open(fname, "w+", encoding="utf-8")
+
+        matrix = ""
+        for elem in values["matrix"][0]:
+            temp = list(elem)
+            string = ''.join(str(e)+" " for e in temp)
+            matrix += string+" "
+
+        feats = ''.join(values["matrix"][1])
+
+        f.write(values["corpora"]+";"+values["features"]+";"+values["accuracy"]+";"+str(values["p"])[:4]+";"+values["CV"][:4]+";"+values["AP"][:4]+";"+matrix+feats+"\n")
+
 

@@ -295,7 +295,6 @@ class Pipeline:
         for feature in self.feature_list:
             model, train, test = self._get_model(feature)
             self.feature_models[feature] = model
-
             if type(self.X_train) == int:
                 self.X_train = train
             else:
@@ -324,7 +323,7 @@ class Pipeline:
         cv = StratifiedKFold(5)
 
         score, permutation_scores, pvalue = permutation_test_score(
-            self.classifier, self.X_train, self.y_train, scoring="accuracy", cv=cv, n_permutations=100, n_jobs=1)
+            self.classifier, self.X_train, self.y_train, scoring="accuracy", cv=cv, n_permutations=25, n_jobs=1)
 
         print("Classification score %s (pvalue : %s)" % (score, pvalue))
 
@@ -398,6 +397,6 @@ class Pipeline:
 
         feats = ''.join(values["matrix"][1])
 
-        f.write(values["corpora"]+";"+values["features"]+";"+values["accuracy"]+";"+str(values["p"])[:4]+";"+values["CV"][:4]+";"+values["AP"][:4]+";"+matrix+feats+"\n")
+        f.write(values["corpora"]+";"+values["features"]+";"+values["accuracy"]+";"+str(values["p"])[:4]+";"+values["CV"][:4]+";"+str(values["AP"])[:4]+";"+matrix+feats+";"+values["level"]+"\n")
 
 

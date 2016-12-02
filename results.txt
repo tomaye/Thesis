@@ -1,2 +1,16 @@
-meta-meta;modals;0.545;0.16;0.52;0.59;86 7  81 12  supportnon-supportive
-meta,forum-meta;bigrams;0.575;0.10;0.53;0.74;64 29  34 59  supportnon-supportive
+train-test;features;accuracy;pvalue;CV;AP;CM feat;level
+meta-meta;modals,skipgrams;0.559;0.03;0.77;0.62;69 24  56 37  supportnon-supportive;coarse
+meta-meta;modals,wordpairs;0.557;0.03;0.68;0.61;83 10  70 23  supportnon-supportive;coarse
+meta-meta;modals,#chunks,skipgrams;0.563;0.03;0.76;0.65;70 23  55 38  supportnon-supportive;coarse
+meta-meta;modals,#chunks,wordpairs;0.575;0.03;0.66;0.71;80 13  56 37  supportnon-supportive;coarse
+meta,forum-meta;bigrams,#chunks,skipgrams,doc2vec;0.589;0.03;0.73;0.74;67 26  43 50  supportnon-supportive;coarse
+meta,forum-meta;#chunks,skipgrams,doc2vec;0.593;0.03;0.74;0.69;74 19  52 41  supportnon-supportive;coarse
+meta,forum-meta;bigrams,#chunks,skipgrams;0.596;0.03;0.73;0.68;62 31  37 56  supportnon-supportive;coarse
+meta,forum-meta;#chunks,skipgrams;0.601;0.03;0.79;0.72;68 25  44 49  supportnon-supportive;coarse
+meta,forum-meta;#chunks,wordpairs;0.599;0.03;0.70;0.68;56 37  41 52  supportnon-supportive;coarse
+meta,forum-meta;#args,skipgrams;0.597;0.03;0.77;0.66;67 26  53 40  supportnon-supportive;coarse
+meta,forum-meta;#args,wordpairs;0.590;0.03;0.57;0.58;49 44  46 47  supportnon-supportive;coarse
+meta,forum-meta;modals,skipgrams;0.587;0.03;0.81;0.60;68 25  50 43  supportnon-supportive;coarse
+meta,forum-meta;modals,wordpairs;0.583;0.03;0.60;0.62;71 22  63 30  supportnon-supportive;coarse
+meta,forum-meta;modals,#chunks,skipgrams;0.585;0.03;0.79;0.67;67 26  45 48  supportnon-supportive;coarse
+meta,forum-meta;modals,#chunks,wordpairs;0.585;0.03;0.70;0.70;54 39  43 50  supportnon-supportive;coarse

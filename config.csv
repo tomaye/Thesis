@@ -1,2 +1,15 @@
-meta;meta;modals;coarse;false
-meta,forum;meta;bigrams;coarse;false
+meta;meta;modals,skipgrams;coarse;false
+meta;meta;modals,wordpairs;coarse;false
+meta;meta;modals,#chunks,skipgrams;coarse;false
+meta;meta;modals,#chunks,wordpairs;coarse;false
+meta,forum;meta;bigrams,#chunks,skipgrams,doc2vec;coarse;false
+meta,forum;meta;#chunks,skipgrams,doc2vec;coarse;false
+meta,forum;meta;bigrams,#chunks,skipgrams;coarse;false
+meta,forum;meta;#chunks,skipgrams;coarse;false
+meta,forum;meta;#chunks,wordpairs;coarse;false
+meta,forum;meta;#args,skipgrams;coarse;false
+meta,forum;meta;#args,wordpairs;coarse;false
+meta,forum;meta;modals,skipgrams;coarse;false
+meta,forum;meta;modals,wordpairs;coarse;false
+meta,forum;meta;modals,#chunks,skipgrams;coarse;false
+meta,forum;meta;modals,#chunks,wordpairs;coarse;false

@@ -54,6 +54,7 @@ with open('config.csv', newline="") as csvfile:
 
             if hierarchical == "true":
                 features.append("coarse_predictions")
+                toFile["features"] += " coarse_predictions"
 
 
 
@@ -137,14 +138,16 @@ with open('config.csv', newline="") as csvfile:
             if AP:
                 averagePrecision = pip.average_precision()
                 confusionMatrix = pip.confusion_matrix(pip.mapping)
+                toFile["AP"] = averagePrecision
 
             if testSignificance:
                 score, pvalue = pip.test_significance(False)
+                confusionMatrix = pip.confusion_matrix(pip.mapping)
                 if pvalue < toFile["p"]:
                     toFile["p"] = pvalue
                     toFile["CV"] = str(score)
                     toFile["matrix"] = (confusionMatrix, pip.mapping)
-                    toFile["AP"] = str(averagePrecision)
+
 
 
             if not cv:

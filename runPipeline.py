@@ -12,7 +12,8 @@ corpusMapping = {
 taxonomyMapping = {
     "coarse": ["support", "non-supportive"],
     "fine": ["contingency", "evidence", "no Label"],
-    "relations": ["justify", "motivate", "expert", "exemplification", "explain", "study", "noLabel"]
+    "relations": ["justification", "motivation", "expert", "exemplification", "explain", "study"]
+    #, "noLabel"
 
 }
 
